@@ -32,12 +32,6 @@ public final class MessengerService {
     this.enabled = configuration.getBoolean("enabled");
   }
 
-  public static MessengerService createFrom(IntaveProxySupportPlugin proxySupportPlugin, Configuration configuration) {
-    Preconditions.checkNotNull(proxySupportPlugin);
-    Preconditions.checkNotNull(configuration);
-    return new MessengerService(proxySupportPlugin, configuration);
-  }
-
   public void start() {
     if (enabled) {
       openChannel();
@@ -192,5 +186,11 @@ public final class MessengerService {
 
   public Map<Class<? extends Packet>, List<IPacketListener>> packetListeners() {
     return packetListeners;
+  }
+
+  public static MessengerService createFrom(IntaveProxySupportPlugin proxySupportPlugin, Configuration configuration) {
+    Preconditions.checkNotNull(proxySupportPlugin);
+    Preconditions.checkNotNull(configuration);
+    return new MessengerService(proxySupportPlugin, configuration);
   }
 }
