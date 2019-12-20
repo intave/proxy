@@ -30,14 +30,6 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
     this.plugin.getProxy().getPluginManager().registerListener(plugin, this);
   }
 
-  public static RemotePunishmentDriver createWithCachingEnabled(IntaveProxySupportPlugin plugin) {
-    return new RemotePunishmentDriver(plugin, true);
-  }
-
-  public static RemotePunishmentDriver createWithCachingDisabled(IntaveProxySupportPlugin plugin) {
-    return new RemotePunishmentDriver(plugin, false);
-  }
-
   @EventHandler
   public void on(PostLoginEvent postLoginEvent) {
     getBanInfoIfAvailable(postLoginEvent.getPlayer(), banEntry -> {
@@ -169,5 +161,13 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
 
   private ProxiedPlayer getPlayerFrom(UUID uuid) {
     return plugin.getProxy().getPlayer(uuid);
+  }
+
+  public static RemotePunishmentDriver createWithCachingEnabled(IntaveProxySupportPlugin plugin) {
+    return new RemotePunishmentDriver(plugin, true);
+  }
+
+  public static RemotePunishmentDriver createWithCachingDisabled(IntaveProxySupportPlugin plugin) {
+    return new RemotePunishmentDriver(plugin, false);
   }
 }

@@ -16,6 +16,10 @@ public final class ConfigurationService {
     this.configuration = configuration;
   }
 
+  public Configuration configuration() {
+    return configuration;
+  }
+
   public static ConfigurationService createFrom(Plugin plugin) {
     Preconditions.checkNotNull(plugin);
 
@@ -38,9 +42,5 @@ public final class ConfigurationService {
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  public Configuration configuration() {
-    return configuration;
   }
 }
