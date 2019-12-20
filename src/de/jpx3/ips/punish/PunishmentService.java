@@ -40,7 +40,7 @@ public final class PunishmentService {
 
     switch (driverIdentifier.toLowerCase()) {
       case "runtime":
-        punishmentDriver = new RuntimePunishmentDriver(plugin);
+        punishmentDriver = RuntimePunishmentDriver.createFrom(plugin);
         break;
       case "sql":
         punishmentDriver = RemotePunishmentDriver.createWithCachingEnabled(plugin);

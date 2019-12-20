@@ -15,7 +15,7 @@ public final class RuntimePunishmentDriver implements PunishmentDriver, Listener
   private Map<UUID, BanEntry> bannedPlayers = new HashMap<>();
   private IntaveProxySupportPlugin plugin;
 
-  public RuntimePunishmentDriver(IntaveProxySupportPlugin plugin) {
+  private RuntimePunishmentDriver(IntaveProxySupportPlugin plugin) {
     this.plugin = plugin;
     this.plugin.getProxy()
       .getPluginManager()
@@ -91,5 +91,9 @@ public final class RuntimePunishmentDriver implements PunishmentDriver, Listener
 
   private ProxiedPlayer getPlayerFrom(UUID uuid) {
     return plugin.getProxy().getPlayer(uuid);
+  }
+
+  public static RuntimePunishmentDriver createFrom(IntaveProxySupportPlugin plugin) {
+    return new RuntimePunishmentDriver(plugin);
   }
 }
