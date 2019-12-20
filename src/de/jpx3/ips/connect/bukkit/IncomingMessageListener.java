@@ -22,11 +22,6 @@ public final class IncomingMessageListener implements Listener {
     this.messengerService = messengerService;
   }
 
-  public static IncomingMessageListener create(
-    MessengerService messengerService) {
-    return new IncomingMessageListener(messengerService);
-  }
-
   @SuppressWarnings("unused")
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPluginMessageReceive(PluginMessageEvent event) {
@@ -119,5 +114,9 @@ public final class IncomingMessageListener implements Listener {
 
   private boolean isUpstream(Connection connection) {
     return connection instanceof UserConnection;
+  }
+
+  public static IncomingMessageListener create(MessengerService messengerService) {
+    return new IncomingMessageListener(messengerService);
   }
 }

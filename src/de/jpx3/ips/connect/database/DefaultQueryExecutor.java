@@ -20,28 +20,6 @@ public final class DefaultQueryExecutor implements IQueryExecutor {
     this.connection = connection;
   }
 
-  public static List<Map<String, Object>> parseResultSetToTableData(ResultSet resultSet) throws SQLException {
-    Preconditions.checkNotNull(resultSet);
-
-    List<Map<String, Object>> results = Lists.newArrayList();
-    ResultSetMetaData meta = resultSet.getMetaData();
-    int columnCount = meta.getColumnCount();
-
-    while (resultSet.next()) {
-      Map<String, Object> row = Maps.newHashMap();
-      for (int i = 0; i < columnCount; ++i) {
-        int columnIndex = i + 1;
-        row.put(
-          meta.getColumnName(columnIndex),
-          resultSet.getObject(columnIndex)
-        );
-      }
-      results.add(row);
-    }
-
-    return results;
-  }
-
   @Override
   public void update(String query) {
     Preconditions.checkNotNull(query);
@@ -81,5 +59,27 @@ public final class DefaultQueryExecutor implements IQueryExecutor {
         e.printStackTrace();
       }
     }
+  }
+
+  public static List<Map<String, Object>> parseResultSetToTableData(ResultSet resultSet) throws SQLException {
+    Preconditions.checkNotNull(resultSet);
+
+    List<Map<String, Object>> results = Lists.newArrayList();
+    ResultSetMetaData meta = resultSet.getMetaData();
+    int columnCount = meta.getColumnCount();
+
+    while (resultSet.next()) {
+      Map<String, Object> row = Maps.newHashMap();
+      for (int i = 0; i < columnCount; ++i) {
+        int columnIndex = i + 1;
+        row.put(
+          meta.getColumnName(columnIndex),
+          resultSet.getObject(columnIndex)
+        );
+      }
+      results.add(row);
+    }
+
+    return results;
   }
 }
