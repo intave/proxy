@@ -1,0 +1,35 @@
+###                            ###
+##  Intave Proxy Support 0.1.6  ##
+##           by Jpx3            ##
+###                            ###
+
+# Connections
+connection:
+
+  # Connection between proxy and the database.
+  sql:
+
+    enabled: false
+
+    connection:
+      jdbc-service: "mysql"
+      host: "a.a.a.a.a.a.org"
+      port: -1
+      database: "thetabledancingbar"
+      user: "XxX$$rIcHy$$XxX"
+      password: "1234"
+
+    create-tables: true
+
+  # Connection between proxy and bukkit.
+  bukkit:
+
+    enabled: true
+
+punishment:
+
+  # RUNTIME | Punishments are cleared after server restart and only available on this proxy
+  # SQL | Punishments are saved in a database and cached
+  # SQL-NC | Punishments are saved in a database and are not cached
+  # NONE
+  driver: "RUNTIME"
