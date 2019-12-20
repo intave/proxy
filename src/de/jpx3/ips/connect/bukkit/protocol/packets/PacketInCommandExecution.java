@@ -35,11 +35,11 @@ public final class PacketInCommandExecution extends Packet {
     output.writeUTF(command);
   }
 
-  public UUID getPlayerId() {
+  public UUID playerId() {
     return playerId;
   }
 
-  public String getCommand() {
+  public String command() {
     return command;
   }
 }

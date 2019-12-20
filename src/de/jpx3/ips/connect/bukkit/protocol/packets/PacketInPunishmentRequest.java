@@ -40,7 +40,7 @@ public final class PacketInPunishmentRequest extends Packet {
     Preconditions.checkNotNull(output);
 
     output.writeUTF(playerId.toString());
-    output.writeInt(punishmentType.getTypeId());
+    output.writeInt(punishmentType.typeId());
     output.writeUTF(message);
     output.writeLong(tempbanEndTimestamp);
   }
@@ -74,12 +74,12 @@ public final class PacketInPunishmentRequest extends Packet {
 
     public static PunishmentType fromId(int id) {
       return Arrays.stream(PunishmentType.values())
-        .filter(value -> value.getTypeId() == id)
+        .filter(value -> value.typeId() == id)
         .findFirst()
         .orElse(null);
     }
 
-    public int getTypeId() {
+    public int typeId() {
       return typeId;
     }
   }

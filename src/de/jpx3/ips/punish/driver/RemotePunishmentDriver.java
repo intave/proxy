@@ -26,7 +26,7 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
   private RemotePunishmentDriver(IntaveProxySupportPlugin plugin, boolean useCaches) {
     this.plugin = plugin;
     this.useCaches = useCaches;
-    this.service = plugin.getSQLService();
+    this.service = plugin.databaseService();
     this.plugin.getProxy().getPluginManager().registerListener(plugin, this);
   }
 

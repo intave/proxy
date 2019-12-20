@@ -19,7 +19,7 @@ public final class PunishmentService {
   }
 
   private void hookPacketListener() {
-    plugin.getMessengerService().addPacketListener(PacketInPunishmentRequest.class, (sender, packet) -> {
+    plugin.messengerService().addPacketListener(PacketInPunishmentRequest.class, (sender, packet) -> {
       switch (packet.getPunishmentType()) {
         case BAN:
           punishmentDriver.banPlayer(packet.getPlayerId(), packet.getMessage());

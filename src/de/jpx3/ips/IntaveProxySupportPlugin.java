@@ -19,10 +19,6 @@ public final class IntaveProxySupportPlugin extends Plugin {
   private MessengerService messengerService;
   private PunishmentService punishmentService;
 
-  public static IntaveProxySupportPlugin getSingletonInstance() {
-    return singletonInstance;
-  }
-
   @Override
   public void onEnable() {
     singletonInstance = this;
@@ -58,15 +54,19 @@ public final class IntaveProxySupportPlugin extends Plugin {
     databaseService.closeConnection();
   }
 
-  public MessengerService getMessengerService() {
+  public MessengerService messengerService() {
     return messengerService;
   }
 
-  public PunishmentService getPunishmentService() {
+  public PunishmentService punishmentService() {
     return punishmentService;
   }
 
-  public DatabaseService getSQLService() {
+  public DatabaseService databaseService() {
     return databaseService;
+  }
+
+  public static IntaveProxySupportPlugin singletonInstance() {
+    return singletonInstance;
   }
 }
