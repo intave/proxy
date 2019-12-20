@@ -14,7 +14,7 @@ public final class DatabaseService {
   private final Executor executor;
   private IntaveProxySupportPlugin plugin;
   private Connection connection;
-  private SQLQueryExecutor queryExecutor;
+  private IQueryExecutor queryExecutor;
 
   private DatabaseService(IntaveProxySupportPlugin plugin, Configuration configuration, Executor executor) {
     this.plugin = plugin;
@@ -23,8 +23,7 @@ public final class DatabaseService {
   }
 
   public void openConnectionIfEnabled() {
-    if (
-      queryExecutor != null ||
+    if (queryExecutor != null ||
         !configuration.getBoolean("enabled")
     ) {
       return;
@@ -78,11 +77,11 @@ public final class DatabaseService {
     }
   }
 
-  public SQLQueryExecutor getQueryExecutor() {
+  public IQueryExecutor getQueryExecutor() {
     return queryExecutor;
   }
 
-  public void setQueryExecutor(SQLQueryExecutor queryExecutor) {
+  public void setQueryExecutor(IQueryExecutor queryExecutor) {
     Preconditions.checkNotNull(queryExecutor);
 
     this.queryExecutor = queryExecutor;

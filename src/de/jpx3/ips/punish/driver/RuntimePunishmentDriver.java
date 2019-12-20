@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class RuntimePunishmentDriver implements PunishmentDriver, Listener {
+public final class RuntimePunishmentDriver implements IPunishmentDriver, Listener {
   private Map<UUID, BanEntry> bannedPlayers = new HashMap<>();
   private IntaveProxySupportPlugin plugin;
 

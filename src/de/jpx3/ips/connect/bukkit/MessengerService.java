@@ -25,7 +25,7 @@ public final class MessengerService {
   private final boolean enabled;
   private IntaveProxySupportPlugin plugin;
   private volatile boolean channelOpen = false;
-  private Map<Class<? extends Packet>, List<IntavePacketListener>> packetListeners;
+  private Map<Class<? extends Packet>, List<IPacketListener>> packetListeners;
 
   private MessengerService(IntaveProxySupportPlugin plugin, Configuration configuration) {
     this.plugin = plugin;
@@ -162,7 +162,7 @@ public final class MessengerService {
 
   public <T extends Packet> void addPacketListener(
     Class<T> type,
-    IntavePacketListener<T> listener
+    IPacketListener<T> listener
   ) {
     Preconditions.checkNotNull(type);
     Preconditions.checkNotNull(listener);
@@ -182,15 +182,15 @@ public final class MessengerService {
         packetListener.handle(sender, packet));
   }
 
-  private List<IntavePacketListener> packetListenersOf(Packet packet) {
+  private List<IPacketListener> packetListenersOf(Packet packet) {
     return packetListenersOf(packet.getClass());
   }
 
-  private List<IntavePacketListener> packetListenersOf(Class<? extends Packet> packetClass) {
+  private List<IPacketListener> packetListenersOf(Class<? extends Packet> packetClass) {
     return packetListeners().get(packetClass);
   }
 
-  public Map<Class<? extends Packet>, List<IntavePacketListener>> packetListeners() {
+  public Map<Class<? extends Packet>, List<IPacketListener>> packetListeners() {
     return packetListeners;
   }
 }

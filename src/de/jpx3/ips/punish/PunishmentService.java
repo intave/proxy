@@ -2,14 +2,14 @@ package de.jpx3.ips.punish;
 
 import de.jpx3.ips.IntaveProxySupportPlugin;
 import de.jpx3.ips.connect.bukkit.protocol.packets.PacketInPunishmentRequest;
-import de.jpx3.ips.punish.driver.PunishmentDriver;
+import de.jpx3.ips.punish.driver.IPunishmentDriver;
 import de.jpx3.ips.punish.driver.RemotePunishmentDriver;
 import de.jpx3.ips.punish.driver.RuntimePunishmentDriver;
 import net.md_5.bungee.config.Configuration;
 
 public final class PunishmentService {
   private IntaveProxySupportPlugin plugin;
-  private PunishmentDriver punishmentDriver;
+  private IPunishmentDriver punishmentDriver;
 
   private PunishmentService(IntaveProxySupportPlugin plugin, Configuration configuration) {
     this.plugin = plugin;
@@ -34,9 +34,9 @@ public final class PunishmentService {
     });
   }
 
-  private PunishmentDriver resolveFrom(Configuration configuration) {
+  private IPunishmentDriver resolveFrom(Configuration configuration) {
     String driverIdentifier = configuration.getString("driver", "runtime");
-    PunishmentDriver punishmentDriver;
+    IPunishmentDriver punishmentDriver;
 
     switch (driverIdentifier.toLowerCase()) {
       case "runtime":
@@ -56,11 +56,11 @@ public final class PunishmentService {
     return punishmentDriver;
   }
 
-  public PunishmentDriver getPunishmentDriver() {
+  public IPunishmentDriver getPunishmentDriver() {
     return punishmentDriver;
   }
 
-  public void setPunishmentDriver(PunishmentDriver punishmentDriver) {
+  public void setPunishmentDriver(IPunishmentDriver punishmentDriver) {
     this.punishmentDriver = punishmentDriver;
   }
 

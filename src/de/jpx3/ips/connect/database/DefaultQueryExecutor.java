@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-public final class DefaultQueryExecutor implements SQLQueryExecutor {
+public final class DefaultQueryExecutor implements IQueryExecutor {
   private Executor executor;
   private Connection connection;
   private volatile Statement statement;

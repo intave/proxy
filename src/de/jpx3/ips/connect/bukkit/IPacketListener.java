@@ -9,6 +9,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
  * Copyright Richard Strunk 2019
  */
 
-public interface IntavePacketListener<P extends Packet> {
+public interface IPacketListener<P extends Packet> {
   void handle(ProxiedPlayer sender, P packet);
 }

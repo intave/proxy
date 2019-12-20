@@ -30,8 +30,7 @@ public final class IncomingMessageListener implements Listener {
   @SuppressWarnings("unused")
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPluginMessageReceive(PluginMessageEvent event) {
-    if (
-      isUpstream(event.getSender()) ||
+    if (isUpstream(event.getSender()) ||
         !isMarkedAsIntaveChannel(event.getTag())
     ) {
       return;

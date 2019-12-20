@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public final class RemotePunishmentDriver implements PunishmentDriver, Listener {
+public final class RemotePunishmentDriver implements IPunishmentDriver, Listener {
   private final static String SELECTION_QUERY = "select * from `ips_ban_entries` where `ips_ban_entries`.`UniquePlayerId` = \"%s\"";
   private final static String INSERTION_QUERY = "insert into `ips_ban_entries` (`EntryId`, `UniquePlayerId`, `BanExpireTimestamp`, `BanReason`) values (NULL, \"%s\", \"%s\", \"%s\")";
   private final boolean useCaches;
