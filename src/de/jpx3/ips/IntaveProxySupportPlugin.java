@@ -2,7 +2,7 @@ package de.jpx3.ips;
 
 import de.jpx3.ips.config.ConfigurationService;
 import de.jpx3.ips.connect.bukkit.MessengerService;
-import de.jpx3.ips.connect.database.SQLService;
+import de.jpx3.ips.connect.database.DatabaseService;
 import de.jpx3.ips.punish.PunishmentService;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -15,7 +15,7 @@ public final class IntaveProxySupportPlugin extends Plugin {
 
   private Executor executor = Executors.newSingleThreadExecutor();
   private ConfigurationService configurationService;
-  private SQLService sqlService;
+  private DatabaseService databaseService;
   private MessengerService messengerService;
   private PunishmentService punishmentService;
 
@@ -43,19 +43,19 @@ public final class IntaveProxySupportPlugin extends Plugin {
 
   private void loadServices() {
     Configuration configuration = configurationService.configuration();
-    sqlService = SQLService.createFrom(this, configuration.getSection("connection.sql"), executor);
+    databaseService = DatabaseService.createFrom(this, configuration.getSection("connection.sql"), executor);
     messengerService = MessengerService.createFrom(this, configuration.getSection("connection.bukkit"));
     punishmentService = PunishmentService.createFrom(this, configuration.getSection("punishment"));
   }
 
   private void enableServices() {
-    sqlService.openConnectionIfEnabled();
+    databaseService.openConnectionIfEnabled();
     messengerService.start();
   }
 
   private void disableServices() {
     messengerService.closeChannel();
-    sqlService.closeConnection();
+    databaseService.closeConnection();
   }
 
   public MessengerService getMessengerService() {
@@ -66,7 +66,7 @@ public final class IntaveProxySupportPlugin extends Plugin {
     return punishmentService;
   }
 
-  public SQLService getSQLService() {
-    return sqlService;
+  public DatabaseService getSQLService() {
+    return databaseService;
   }
 }

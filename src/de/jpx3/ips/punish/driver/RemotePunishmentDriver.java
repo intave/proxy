@@ -3,7 +3,7 @@ package de.jpx3.ips.punish.driver;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import de.jpx3.ips.IntaveProxySupportPlugin;
-import de.jpx3.ips.connect.database.SQLService;
+import de.jpx3.ips.connect.database.DatabaseService;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -21,7 +21,7 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
   private final boolean useCaches;
   private IntaveProxySupportPlugin plugin;
   private Map<UUID, BanEntry> playerBanCache = Maps.newConcurrentMap();
-  private SQLService service;
+  private DatabaseService service;
 
   private RemotePunishmentDriver(IntaveProxySupportPlugin plugin, boolean useCaches) {
     this.plugin = plugin;

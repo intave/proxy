@@ -9,25 +9,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.Executor;
 
-public final class SQLService {
+public final class DatabaseService {
   private final Configuration configuration;
   private final Executor executor;
   private IntaveProxySupportPlugin plugin;
   private Connection connection;
   private SQLQueryExecutor queryExecutor;
 
-  private SQLService(IntaveProxySupportPlugin plugin, Configuration configuration, Executor executor) {
+  private DatabaseService(IntaveProxySupportPlugin plugin, Configuration configuration, Executor executor) {
     this.plugin = plugin;
     this.configuration = configuration;
     this.executor = executor;
-  }
-
-  public static SQLService createFrom(IntaveProxySupportPlugin plugin, Configuration configuration, Executor executor) {
-    Preconditions.checkNotNull(plugin);
-    Preconditions.checkNotNull(configuration);
-    Preconditions.checkNotNull(executor);
-
-    return new SQLService(plugin, configuration, executor);
   }
 
   public void openConnectionIfEnabled() {
@@ -94,5 +86,13 @@ public final class SQLService {
     Preconditions.checkNotNull(queryExecutor);
 
     this.queryExecutor = queryExecutor;
+  }
+
+  public static DatabaseService createFrom(IntaveProxySupportPlugin plugin, Configuration configuration, Executor executor) {
+    Preconditions.checkNotNull(plugin);
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(executor);
+
+    return new DatabaseService(plugin, configuration, executor);
   }
 }
