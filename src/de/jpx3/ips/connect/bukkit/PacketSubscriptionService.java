@@ -14,14 +14,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public final class PacketSubscriptionService {
   private IntaveProxySupportPlugin plugin;
-  private Map<Class<? extends Packet>, List<IPacketSubscriber>> packetSubscriber;
+  private Map<Class<? extends Packet>, List<IPacketSubscriber>> packetSubscriptions;
 
   private PacketSubscriptionService(IntaveProxySupportPlugin plugin) {
     this.plugin = plugin;
   }
 
   public void setup() {
-    packetSubscriber = Maps.newHashMap();
+    packetSubscriptions = Maps.newHashMap();
 
     // Loop through all packet classes
     for (Class<? extends Packet> packetClass : PacketRegister.packetTypes()) {
@@ -32,22 +32,22 @@ public final class PacketSubscriptionService {
       }
 
       // Assign a empty list to each packet class
-      packetSubscriber.put(packetClass, new CopyOnWriteArrayList<>());
+      packetSubscriptions.put(packetClass, new CopyOnWriteArrayList<>());
     }
   }
 
   public void reset() {
-    packetSubscriber.clear();
+    packetSubscriptions.clear();
   }
 
-  public <T extends Packet> void addSubscriber(
+  public <T extends Packet> void addSubscription(
     Class<T> type,
-    IPacketSubscriber<T> listener
+    IPacketSubscriber<T> subscriber
   ) {
     Preconditions.checkNotNull(type);
-    Preconditions.checkNotNull(listener);
+    Preconditions.checkNotNull(subscriber);
 
-    packetSubscribersOf(type).add(listener);
+    subscriptionsOf(type).add(subscriber);
   }
 
   public <P extends Packet> void broadcastPacketToSubscribers(
@@ -57,21 +57,21 @@ public final class PacketSubscriptionService {
     Preconditions.checkNotNull(sender);
     Preconditions.checkNotNull(packet);
 
-    packetSubscribersOf(packet)
-      .forEach(packetListener ->
-        packetListener.handle(sender, packet));
+    subscriptionsOf(packet)
+      .forEach(packetSubscriber ->
+        packetSubscriber.handle(sender, packet));
   }
 
-  private List<IPacketSubscriber> packetSubscribersOf(Packet packet) {
-    return packetSubscribersOf(packet.getClass());
+  private List<IPacketSubscriber> subscriptionsOf(Packet packet) {
+    return subscriptionsOf(packet.getClass());
   }
 
-  private List<IPacketSubscriber> packetSubscribersOf(Class<? extends Packet> packetClass) {
+  private List<IPacketSubscriber> subscriptionsOf(Class<? extends Packet> packetClass) {
     return packetSubscriber().get(packetClass);
   }
 
   public Map<Class<? extends Packet>, List<IPacketSubscriber>> packetSubscriber() {
-    return packetSubscriber;
+    return packetSubscriptions;
   }
 
   public static PacketSubscriptionService createFrom(IntaveProxySupportPlugin plugin) {
