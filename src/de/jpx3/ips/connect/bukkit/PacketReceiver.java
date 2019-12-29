@@ -74,7 +74,7 @@ public final class PacketReceiver implements Listener {
       }
 
       messengerService
-        .packetSubscriberService()
+        .packetSubscriptionService()
         .broadcastPacketToSubscribers(
           receiverConnection,
           constructedPacket

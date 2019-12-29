@@ -72,7 +72,7 @@ public final class MessengerService {
     return packetReceiver;
   }
 
-  public PacketSubscriptionService packetSubscriberService() {
+  public PacketSubscriptionService packetSubscriptionService() {
     return packetSubscriptionService;
   }
 
