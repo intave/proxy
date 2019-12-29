@@ -7,6 +7,8 @@ import de.jpx3.ips.punish.driver.RemotePunishmentDriver;
 import de.jpx3.ips.punish.driver.RuntimePunishmentDriver;
 import net.md_5.bungee.config.Configuration;
 
+import java.util.UUID;
+
 public final class PunishmentService {
   private IntaveProxySupportPlugin plugin;
   private IPunishmentDriver punishmentDriver;
@@ -14,21 +16,21 @@ public final class PunishmentService {
   private PunishmentService(IntaveProxySupportPlugin plugin, Configuration configuration) {
     this.plugin = plugin;
     this.punishmentDriver = resolveFrom(configuration);
-
-    this.hookPacketListener();
   }
 
-  private void hookPacketListener() {
-    plugin.messengerService().addPacketListener(PacketInPunishmentRequest.class, (sender, packet) -> {
-      switch (packet.getPunishmentType()) {
+  public void setup() {
+    plugin.messengerService().packetSubscriptionService().addSubscriber(PacketInPunishmentRequest.class, (sender, packet) -> {
+      UUID playerId = packet.playerId();
+      String banMessage = packet.message();
+      switch (packet.punishmentType()) {
         case BAN:
-          punishmentDriver.banPlayer(packet.getPlayerId(), packet.getMessage());
+          punishmentDriver.banPlayer(playerId, banMessage);
           break;
         case KICK:
-          punishmentDriver.kickPlayer(packet.getPlayerId(), packet.getMessage());
+          punishmentDriver.kickPlayer(playerId, banMessage);
           break;
         case TEMP_BAN:
-          punishmentDriver.banPlayerTemporarily(packet.getPlayerId(), packet.getTempbanEndTimestamp(), packet.getMessage());
+          punishmentDriver.banPlayerTemporarily(playerId, packet.endTimestamp(), banMessage);
           break;
       }
     });
@@ -56,7 +58,7 @@ public final class PunishmentService {
     return punishmentDriver;
   }
 
-  public IPunishmentDriver getPunishmentDriver() {
+  public IPunishmentDriver punishmentDriver() {
     return punishmentDriver;
   }
 
