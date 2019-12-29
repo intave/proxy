@@ -60,10 +60,10 @@ public final class PacketSubscriptionService {
   }
 
   private List<IPacketSubscriber> subscriptionsOf(Class<? extends Packet> packetClass) {
-    return packetSubscriber().get(packetClass);
+    return packetSubscriptions().get(packetClass);
   }
 
-  public Map<Class<? extends Packet>, List<IPacketSubscriber>> packetSubscriber() {
+  public Map<Class<? extends Packet>, List<IPacketSubscriber>> packetSubscriptions() {
     return packetSubscriptions;
   }
 

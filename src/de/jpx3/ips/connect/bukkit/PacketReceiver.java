@@ -43,7 +43,6 @@ public final class PacketReceiver implements Listener {
     }
 
     event.setCancelled(true);
-
     receivePayloadPacket((UserConnection) event.getReceiver(), event.getData());
   }
 
