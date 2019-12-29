@@ -49,15 +49,10 @@ public final class PacketSender {
     pushPacketHeader(byteArrayWrapper, packet.getClass());
     // Push packet data
     pushPacketData(byteArrayWrapper, packet);
-    // Push packet footer
+    // Push protocol footer
     pushProtocolFooter(byteArrayWrapper);
     // Extract byte array from wrapper
     return byteArrayWrapper.toByteArray();
-  }
-
-  private ByteArrayDataOutput newByteArrayDataOutput() {
-    //noinspection UnstableApiUsage
-    return ByteStreams.newDataOutput();
   }
 
   private void pushProtocolHeader(ByteArrayDataOutput byteArrayWrapper) {
@@ -72,12 +67,7 @@ public final class PacketSender {
     ByteArrayDataOutput byteArrayWrapper,
     Class<? extends Packet> packetClass
   ) {
-    int packetId = packetIdFrom(packetClass);
-    byteArrayWrapper.writeInt(packetId);
-  }
-
-  private int packetIdFrom(Class<? extends Packet> packetClass) {
-    return PacketRegister.identifierOf(packetClass);
+    byteArrayWrapper.writeInt(PacketRegister.identifierOf(packetClass));
   }
 
   private void pushPacketData(
@@ -90,6 +80,11 @@ public final class PacketSender {
 
   private void pushProtocolFooter(ByteArrayDataOutput byteArrayWrapper) {
     byteArrayWrapper.writeUTF(PROTOCOL_FOOTER);
+  }
+
+  private ByteArrayDataOutput newByteArrayDataOutput() {
+    //noinspection UnstableApiUsage
+    return ByteStreams.newDataOutput();
   }
 
   public static PacketSender createFrom(IntaveProxySupportPlugin plugin, MessengerService messengerService) {
