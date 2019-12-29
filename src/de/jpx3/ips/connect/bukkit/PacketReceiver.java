@@ -2,6 +2,7 @@ package de.jpx3.ips.connect.bukkit;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import de.jpx3.ips.IntaveProxySupportPlugin;
 import de.jpx3.ips.connect.bukkit.protocol.Packet;
 import de.jpx3.ips.connect.bukkit.protocol.PacketSerialisationUtilities;
 import de.jpx3.ips.connect.bukkit.protocol.exceptions.InvalidPacketException;
@@ -15,11 +16,21 @@ import net.md_5.bungee.event.EventPriority;
 
 import static de.jpx3.ips.connect.bukkit.MessengerService.*;
 
-public final class IncomingMessageListener implements Listener {
+public final class PacketReceiver implements Listener {
+  private IntaveProxySupportPlugin plugin;
   private MessengerService messengerService;
 
-  private IncomingMessageListener(MessengerService messengerService) {
+  private PacketReceiver(IntaveProxySupportPlugin plugin, MessengerService messengerService) {
+    this.plugin = plugin;
     this.messengerService = messengerService;
+  }
+
+  public void setup() {
+    plugin.getProxy().getPluginManager().registerListener(plugin, this);
+  }
+
+  public void unset() {
+    plugin.getProxy().getPluginManager().unregisterListener(this);
   }
 
   @SuppressWarnings("unused")
@@ -56,16 +67,18 @@ public final class IncomingMessageListener implements Listener {
       }
 
       Packet constructedPacket = constructPacketFrom(inputData);
-
+      
       String footer = readFooter(inputData);
       if (!footer.equalsIgnoreCase("IPC_END")) {
         throw new InvalidPacketException("Invalid end of packet");
       }
 
-      messengerService.broadcastPacketToListeners(
-        receiverConnection,
-        constructedPacket
-      );
+      messengerService
+        .packetSubscriberService()
+        .broadcastPacketToSubscribers(
+          receiverConnection,
+          constructedPacket
+        );
     } catch (Exception exception) {
       throw new IllegalStateException("Could not handle incoming packet", exception);
     }
@@ -116,7 +129,7 @@ public final class IncomingMessageListener implements Listener {
     return connection instanceof UserConnection;
   }
 
-  public static IncomingMessageListener create(MessengerService messengerService) {
-    return new IncomingMessageListener(messengerService);
+  public static PacketReceiver createFrom(IntaveProxySupportPlugin plugin, MessengerService messengerService) {
+    return new PacketReceiver(plugin, messengerService);
   }
 }

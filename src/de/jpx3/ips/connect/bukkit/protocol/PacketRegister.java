@@ -37,7 +37,7 @@ public final class PacketRegister {
     return Optional.ofNullable(value);
   }
 
-  public static boolean isPacketOutbound(Class<? extends Packet> packetClass) {
+  public static boolean packetOutbound(Class<? extends Packet> packetClass) {
     Preconditions.checkNotNull(packetClass);
 
     return identifierOf(packetClass) >= 100;
