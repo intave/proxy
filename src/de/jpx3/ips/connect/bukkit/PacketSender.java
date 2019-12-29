@@ -13,9 +13,11 @@ import static de.jpx3.ips.connect.bukkit.MessengerService.*;
 
 public final class PacketSender {
   private IntaveProxySupportPlugin plugin;
+  private MessengerService messengerService;
 
-  private PacketSender(IntaveProxySupportPlugin plugin) {
+  private PacketSender(IntaveProxySupportPlugin plugin, MessengerService messengerService) {
     this.plugin = plugin;
+    this.messengerService = messengerService;
   }
 
   public void setup() {
@@ -30,6 +32,9 @@ public final class PacketSender {
     Preconditions.checkNotNull(player);
     Preconditions.checkNotNull(packet);
 
+    messengerService
+      .packetSubscriptionService()
+      .broadcastPacketToSubscribers(player, packet);
     player.sendData(OUTGOING_CHANNEL, prepareDataToSend(packet));
   }
 
@@ -87,7 +92,7 @@ public final class PacketSender {
     byteArrayWrapper.writeUTF(PROTOCOL_FOOTER);
   }
 
-  public static PacketSender createFrom(IntaveProxySupportPlugin plugin) {
-    return new PacketSender(plugin);
+  public static PacketSender createFrom(IntaveProxySupportPlugin plugin, MessengerService messengerService) {
+    return new PacketSender(plugin, messengerService);
   }
 }

@@ -25,8 +25,9 @@ public final class MessengerService {
   }
 
   public void setup() {
+    packetSubscriptionService = PacketSubscriptionService.createFrom(plugin);
     packetReceiver = PacketReceiver.createFrom(plugin,this);
-    packetSender = PacketSender.createFrom(plugin);
+    packetSender = PacketSender.createFrom(plugin, this);
 
     if(enabled()) {
       openChannel();
@@ -41,13 +42,12 @@ public final class MessengerService {
     packetSender.setup();
     packetReceiver.setup();
     packetSubscriptionService.setup();
-
     channelOpen = true;
   }
 
   public void closeChannel() {
     if(!channelOpen()) {
-      return;
+      throw new IllegalStateException();
     }
 
     packetSender.reset();

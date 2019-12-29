@@ -44,8 +44,11 @@ public final class PacketReceiver implements Listener {
 
     event.setCancelled(true);
 
-    UserConnection receiverConnection = (UserConnection) event.getReceiver();
-    ByteArrayDataInput inputData = newByteArrayDataInputFrom(event.getData());
+    receivePayloadPacket((UserConnection) event.getReceiver(), event.getData());
+  }
+
+  public void receivePayloadPacket(UserConnection player, byte[] data) {
+    ByteArrayDataInput inputData = newByteArrayDataInputFrom(data);
 
     try {
       String channelName = readChannelName(inputData);
@@ -67,7 +70,7 @@ public final class PacketReceiver implements Listener {
       }
 
       Packet constructedPacket = constructPacketFrom(inputData);
-      
+
       String footer = readFooter(inputData);
       if (!footer.equalsIgnoreCase("IPC_END")) {
         throw new InvalidPacketException("Invalid end of packet");
@@ -76,7 +79,7 @@ public final class PacketReceiver implements Listener {
       messengerService
         .packetSubscriptionService()
         .broadcastPacketToSubscribers(
-          receiverConnection,
+          player,
           constructedPacket
         );
     } catch (Exception exception) {
