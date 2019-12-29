@@ -33,4 +33,12 @@ public final class PacketInVersionInfo extends Packet {
     output.writeUTF(intaveVersion);
     output.writeInt(protocolVersion);
   }
+
+  public String intaveVersion() {
+    return intaveVersion;
+  }
+
+  public int protocolVersion() {
+    return protocolVersion;
+  }
 }

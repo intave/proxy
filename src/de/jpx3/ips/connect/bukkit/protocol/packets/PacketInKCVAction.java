@@ -46,4 +46,24 @@ public final class PacketInKCVAction extends Packet {
     output.writeUTF(finalFlagMessage);
     output.writeInt(finalTotalViolationLevel);
   }
+
+  public UUID kickedPlayerId() {
+    return kickedPlayerId;
+  }
+
+  public String kickingCheckName() {
+    return kickingCheckName;
+  }
+
+  public String kickingCheckCategory() {
+    return kickingCheckCategory;
+  }
+
+  public String finalFlagMessage() {
+    return finalFlagMessage;
+  }
+
+  public int finalTotalViolationLevel() {
+    return finalTotalViolationLevel;
+  }
 }

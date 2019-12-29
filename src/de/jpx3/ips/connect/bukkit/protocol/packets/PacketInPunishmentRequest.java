@@ -45,19 +45,19 @@ public final class PacketInPunishmentRequest extends Packet {
     output.writeLong(tempbanEndTimestamp);
   }
 
-  public UUID getPlayerId() {
+  public UUID playerId() {
     return playerId;
   }
 
-  public PunishmentType getPunishmentType() {
+  public PunishmentType punishmentType() {
     return punishmentType;
   }
 
-  public long getTempbanEndTimestamp() {
+  public long endTimestamp() {
     return tempbanEndTimestamp;
   }
 
-  public String getMessage() {
+  public String message() {
     return message;
   }
 
