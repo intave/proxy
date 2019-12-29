@@ -17,7 +17,7 @@ public final class MessengerService {
 
   private PacketSender packetSender;
   private PacketReceiver packetReceiver;
-  private PacketSubscriberService packetSubscriberService;
+  private PacketSubscriptionService packetSubscriptionService;
 
   private MessengerService(IntaveProxySupportPlugin plugin, Configuration configuration) {
     this.plugin = plugin;
@@ -40,7 +40,7 @@ public final class MessengerService {
 
     packetSender.setup();
     packetReceiver.setup();
-    packetSubscriberService.setup();
+    packetSubscriptionService.setup();
 
     channelOpen = true;
   }
@@ -52,7 +52,7 @@ public final class MessengerService {
 
     packetSender.reset();
     packetReceiver.unset();
-    packetSubscriberService.reset();
+    packetSubscriptionService.reset();
     channelOpen = false;
   }
 
@@ -72,8 +72,8 @@ public final class MessengerService {
     return packetReceiver;
   }
 
-  public PacketSubscriberService packetSubscriberService() {
-    return packetSubscriberService;
+  public PacketSubscriptionService packetSubscriberService() {
+    return packetSubscriptionService;
   }
 
   public static MessengerService createFrom(IntaveProxySupportPlugin proxySupportPlugin, Configuration configuration) {

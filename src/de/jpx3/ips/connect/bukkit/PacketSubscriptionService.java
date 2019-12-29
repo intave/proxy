@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class PacketSubscriberService {
+public final class PacketSubscriptionService {
   private IntaveProxySupportPlugin plugin;
   private Map<Class<? extends Packet>, List<IPacketSubscriber>> packetSubscriber;
 
-  private PacketSubscriberService(IntaveProxySupportPlugin plugin) {
+  private PacketSubscriptionService(IntaveProxySupportPlugin plugin) {
     this.plugin = plugin;
   }
 
@@ -74,7 +74,7 @@ public final class PacketSubscriberService {
     return packetSubscriber;
   }
 
-  public static PacketSubscriberService createFrom(IntaveProxySupportPlugin plugin) {
-    return new PacketSubscriberService(plugin);
+  public static PacketSubscriptionService createFrom(IntaveProxySupportPlugin plugin) {
+    return new PacketSubscriptionService(plugin);
   }
 }
