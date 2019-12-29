@@ -63,7 +63,7 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
       .withReason(banMessage)
       .withId(playerId)
       .withEnd(endOfBanTimestamp)
-      .construct();
+      .build();
 
     bannedPlayers.putIfAbsent(playerId, construct);
     player.disconnect("[Intave] " + banMessage);
@@ -83,7 +83,7 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
       .withReason(banMessage)
       .withId(playerId)
       .withAnInfiniteDuration()
-      .construct();
+      .build();
 
     bannedPlayers.put(playerId, banEntry);
     player.disconnect("[Intave] " + banMessage);

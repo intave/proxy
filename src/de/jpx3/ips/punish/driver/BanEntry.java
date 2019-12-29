@@ -73,7 +73,7 @@ public final class BanEntry {
       return this;
     }
 
-    public BanEntry construct() {
+    public BanEntry build() {
       Preconditions.checkNotNull(uuid);
       Preconditions.checkNotNull(reason);
       Preconditions.checkState(end > System.currentTimeMillis());

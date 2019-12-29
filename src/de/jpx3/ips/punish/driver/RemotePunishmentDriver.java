@@ -66,7 +66,7 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
       .withId(playerId)
       .withEnd(endOfBanTimestamp)
       .withReason(banMessage)
-      .construct();
+      .build();
 
     setBanEntry(banEntry);
   }
@@ -85,7 +85,7 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
       .withId(playerId)
       .withReason(banMessage)
       .withAnInfiniteDuration()
-      .construct();
+      .build();
 
     setBanEntry(banEntry);
   }
@@ -132,7 +132,7 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
           .withId(uuid)
           .withEnd(endingOn)
           .withReason(reason)
-          .construct();
+          .build();
 
         break;
       }
