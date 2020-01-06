@@ -6,6 +6,5 @@ import java.util.function.Consumer;
 
 public interface IQueryExecutor {
   void update(String query);
-
   void find(String query, Consumer<List<Map<String, Object>>> lazyReturn);
 }
