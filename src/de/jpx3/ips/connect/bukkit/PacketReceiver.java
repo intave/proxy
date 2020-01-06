@@ -135,7 +135,8 @@ public final class PacketReceiver implements Listener {
   }
 
   public static PacketReceiver createFrom(IntaveProxySupportPlugin plugin,
-                                          MessengerService messengerService) {
+                                          MessengerService messengerService
+  ) {
     return new PacketReceiver(plugin, messengerService);
   }
 }

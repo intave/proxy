@@ -77,7 +77,8 @@ public final class MessengerService {
   }
 
   public static MessengerService createFrom(IntaveProxySupportPlugin proxySupportPlugin,
-                                            Configuration configuration) {
+                                            Configuration configuration
+  ) {
     Preconditions.checkNotNull(proxySupportPlugin);
     Preconditions.checkNotNull(configuration);
     return new MessengerService(proxySupportPlugin, configuration);

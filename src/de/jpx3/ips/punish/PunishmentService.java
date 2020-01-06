@@ -67,7 +67,8 @@ public final class PunishmentService {
   }
 
   public static PunishmentService createFrom(IntaveProxySupportPlugin plugin,
-                                             Configuration configuration) {
+                                             Configuration configuration
+  ) {
     return new PunishmentService(plugin, configuration);
   }
 }

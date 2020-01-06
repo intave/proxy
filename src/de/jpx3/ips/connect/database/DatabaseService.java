@@ -110,7 +110,10 @@ public final class DatabaseService {
     this.queryExecutor = queryExecutor;
   }
 
-  public static DatabaseService createFrom(IntaveProxySupportPlugin plugin, Configuration configuration, Executor executor) {
+  public static DatabaseService createFrom(IntaveProxySupportPlugin plugin,
+                                           Configuration configuration,
+                                           Executor executor
+  ) {
     Preconditions.checkNotNull(plugin);
     Preconditions.checkNotNull(configuration);
     Preconditions.checkNotNull(executor);
