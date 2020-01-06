@@ -44,10 +44,12 @@ public final class PacketReceiver implements Listener {
     receivePayloadPacket((UserConnection) event.getReceiver(), event.getData());
   }
 
-  public void receivePayloadPacket(UserConnection player, byte[] data) {
+  public void receivePayloadPacket(UserConnection player,
+                                   byte[] data
+  ) {
     ByteArrayDataInput inputData = newByteArrayDataInputFrom(data);
-
     try {
+
       String channelName = readChannelName(inputData);
       if (!channelName.equalsIgnoreCase(PROTOCOL_HEADER)) {
         return;
@@ -60,7 +62,6 @@ public final class PacketReceiver implements Listener {
           PROTOCOL_VERSION,
           protocolVersion
         );
-
         throw new ProtocolVersionMismatchException(
           invalidVersionExceptionMessage
         );
@@ -69,7 +70,7 @@ public final class PacketReceiver implements Listener {
       AbstractPacket constructedPacket = constructPacketFrom(inputData);
 
       String footer = readFooter(inputData);
-      if (!footer.equalsIgnoreCase("IPC_END")) {
+      if (!footer.equalsIgnoreCase(PROTOCOL_FOOTER)) {
         throw new InvalidPacketException("Invalid end of packet");
       }
 
