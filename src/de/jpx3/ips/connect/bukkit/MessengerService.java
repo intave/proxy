@@ -11,13 +11,13 @@ public final class MessengerService {
   public final static String PROTOCOL_HEADER = "IPC_BEGIN";
   public final static String PROTOCOL_FOOTER = "IPC_END";
 
-  private IntaveProxySupportPlugin plugin;
+  private final IntaveProxySupportPlugin plugin;
   private final boolean enabled;
-  private volatile boolean channelOpen = false;
 
   private PacketSender packetSender;
   private PacketReceiver packetReceiver;
   private PacketSubscriptionService packetSubscriptionService;
+  private boolean channelOpen = false;
 
   private MessengerService(IntaveProxySupportPlugin plugin, Configuration configuration) {
     this.plugin = plugin;
@@ -25,9 +25,9 @@ public final class MessengerService {
   }
 
   public void setup() {
-    packetSubscriptionService = PacketSubscriptionService.createFrom(plugin);
-    packetReceiver = PacketReceiver.createFrom(plugin,this);
     packetSender = PacketSender.createFrom(plugin, this);
+    packetReceiver = PacketReceiver.createFrom(plugin,this);
+    packetSubscriptionService = PacketSubscriptionService.createFrom(plugin);
 
     if(enabled()) {
       openChannel();
