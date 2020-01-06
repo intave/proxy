@@ -31,9 +31,9 @@ public final class PacketSubscriptionService {
     packetSubscriptions.clear();
   }
 
-  public <T extends AbstractPacket> void addSubscriber(
-    Class<T> type,
-    IPacketSubscriber<T> subscriber
+  public <P extends AbstractPacket> void addSubscriber(
+    Class<P> type,
+    IPacketSubscriber<P> subscriber
   ) {
     Preconditions.checkNotNull(type);
     Preconditions.checkNotNull(subscriber);
