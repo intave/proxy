@@ -8,22 +8,25 @@ import de.jpx3.ips.connect.bukkit.AbstractPacket;
 import java.util.UUID;
 
 public final class PacketInCommandExecution extends AbstractPacket {
-  private UUID playerId;
+  private UUID id;
   private String command;
 
   public PacketInCommandExecution() {
   }
 
-  public PacketInCommandExecution(UUID playerId, String command) {
-    this.playerId = playerId;
+  public PacketInCommandExecution(UUID id,
+                                  String command
+  ) {
+    this.id = id;
     this.command = command;
   }
 
   @Override
-  public void applyFrom(ByteArrayDataInput input) throws IllegalStateException, AssertionError {
+  public void applyFrom(ByteArrayDataInput input)
+    throws IllegalStateException, AssertionError {
     Preconditions.checkNotNull(input);
 
-    playerId = UUID.fromString(input.readUTF());
+    id = UUID.fromString(input.readUTF());
     command = input.readUTF();
   }
 
@@ -31,12 +34,12 @@ public final class PacketInCommandExecution extends AbstractPacket {
   public void applyTo(ByteArrayDataOutput output) {
     Preconditions.checkNotNull(output);
 
-    output.writeUTF(playerId.toString());
+    output.writeUTF(id.toString());
     output.writeUTF(command);
   }
 
-  public UUID playerId() {
-    return playerId;
+  public UUID id() {
+    return id;
   }
 
   public String command() {

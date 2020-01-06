@@ -11,7 +11,8 @@ public final class PacketOutVersionRequest extends AbstractPacket {
   }
 
   @Override
-  public void applyFrom(ByteArrayDataInput input) throws IllegalStateException, AssertionError {
+  public void applyFrom(ByteArrayDataInput input)
+    throws IllegalStateException, AssertionError {
     Preconditions.checkNotNull(input);
 
   }

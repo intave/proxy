@@ -44,14 +44,14 @@ public final class BanEntry {
   }
 
   public static final class Builder {
-    private UUID uuid;
+    private UUID id;
     private String reason;
     private long end;
 
     public Builder withId(UUID id) {
       Preconditions.checkNotNull(id);
 
-      this.uuid = id;
+      this.id = id;
       return this;
     }
 
@@ -74,11 +74,11 @@ public final class BanEntry {
     }
 
     public BanEntry build() {
-      Preconditions.checkNotNull(uuid);
+      Preconditions.checkNotNull(id);
       Preconditions.checkNotNull(reason);
       Preconditions.checkState(end > System.currentTimeMillis());
 
-      return new BanEntry(uuid, reason, end);
+      return new BanEntry(id, reason, end);
     }
   }
 }

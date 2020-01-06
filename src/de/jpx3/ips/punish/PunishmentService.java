@@ -40,21 +40,21 @@ public final class PunishmentService {
   private void processPunishmentPacket(ProxiedPlayer sender,
                                        PacketInPunishmentRequest packet
   ) {
-    UUID playerId = packet.playerId();
-    String banMessage = packet.message();
+    UUID id = packet.id();
+    String message = packet.message();
 
     switch (packet.punishmentType()) {
       case BAN:
         punishmentDriver.
-          banPlayer(playerId, banMessage);
+          banPlayer(id, message);
         break;
       case KICK:
         punishmentDriver.
-          kickPlayer(playerId, banMessage);
+          kickPlayer(id, message);
         break;
       case TEMP_BAN:
         punishmentDriver.
-          banPlayerTemporarily(playerId, packet.endTimestamp(), banMessage);
+          banPlayerTemporarily(id, packet.endTimestamp(), message);
         break;
     }
   }

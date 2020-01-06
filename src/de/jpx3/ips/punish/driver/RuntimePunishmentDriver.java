@@ -45,49 +45,49 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
   }
 
   @Override
-  public void kickPlayer(UUID playerId, String kickMessage) {
-    Preconditions.checkNotNull(playerId);
+  public void kickPlayer(UUID id, String kickMessage) {
+    Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(kickMessage);
 
-    ProxiedPlayer player = getPlayerFrom(playerId);
+    ProxiedPlayer player = getPlayerFrom(id);
     if (player == null)
       return;
     player.disconnect(DENY_LOGIN_MESSAGE_PREFIX + kickMessage);
   }
 
   @Override
-  public void banPlayerTemporarily(UUID playerId, long endOfBanTimestamp, String banMessage) {
-    Preconditions.checkNotNull(playerId);
+  public void banPlayerTemporarily(UUID id, long endOfBanTimestamp, String banMessage) {
+    Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
 
-    ProxiedPlayer player = getPlayerFrom(playerId);
+    ProxiedPlayer player = getPlayerFrom(id);
     if (player == null)
       return;
 
     BanEntry construct = BanEntry.builder()
       .withReason(banMessage)
-      .withId(playerId)
+      .withId(id)
       .withEnd(endOfBanTimestamp)
       .build();
-    bannedPlayers.put(playerId, construct);
+    bannedPlayers.put(id, construct);
     player.disconnect(DENY_LOGIN_MESSAGE_PREFIX + banMessage);
   }
 
   @Override
-  public void banPlayer(UUID playerId, String banMessage) {
-    Preconditions.checkNotNull(playerId);
+  public void banPlayer(UUID id, String banMessage) {
+    Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
 
-    ProxiedPlayer player = getPlayerFrom(playerId);
+    ProxiedPlayer player = getPlayerFrom(id);
     if (player == null)
       return;
 
     BanEntry banEntry = BanEntry.builder()
       .withReason(banMessage)
-      .withId(playerId)
+      .withId(id)
       .withAnInfiniteDuration()
       .build();
-    bannedPlayers.put(playerId, banEntry);
+    bannedPlayers.put(id, banEntry);
     player.disconnect("[Intave] " + banMessage);
   }
 

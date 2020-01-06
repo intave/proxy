@@ -8,7 +8,7 @@ import de.jpx3.ips.connect.bukkit.AbstractPacket;
 import java.util.UUID;
 
 public final class PacketInKCVAction extends AbstractPacket {
-  private UUID kickedPlayerId;
+  private UUID id;
   private String kickingCheckName;
   private String kickingCheckCategory;
   private String finalFlagMessage;
@@ -17,8 +17,10 @@ public final class PacketInKCVAction extends AbstractPacket {
   public PacketInKCVAction() {
   }
 
-  public PacketInKCVAction(UUID playerId, String checkName, String checkCategory, String finalFlagMessage, int finalTotalViolationLevel) {
-    this.kickedPlayerId = playerId;
+  public PacketInKCVAction(UUID id, String checkName, String checkCategory,
+                           String finalFlagMessage, int finalTotalViolationLevel
+  ) {
+    this.id = id;
     this.kickingCheckName = checkName;
     this.kickingCheckCategory = checkCategory;
     this.finalFlagMessage = finalFlagMessage;
@@ -26,10 +28,11 @@ public final class PacketInKCVAction extends AbstractPacket {
   }
 
   @Override
-  public void applyFrom(ByteArrayDataInput input) throws IllegalStateException, AssertionError {
+  public void applyFrom(ByteArrayDataInput input)
+    throws IllegalStateException, AssertionError {
     Preconditions.checkNotNull(input);
 
-    kickedPlayerId = UUID.fromString(input.readUTF());
+    id = UUID.fromString(input.readUTF());
     kickingCheckName = input.readUTF();
     kickingCheckCategory = input.readUTF();
     finalFlagMessage = input.readUTF();
@@ -40,7 +43,7 @@ public final class PacketInKCVAction extends AbstractPacket {
   public void applyTo(ByteArrayDataOutput output) {
     Preconditions.checkNotNull(output);
 
-    output.writeUTF(kickedPlayerId.toString());
+    output.writeUTF(id.toString());
     output.writeUTF(kickingCheckName);
     output.writeUTF(kickingCheckCategory);
     output.writeUTF(finalFlagMessage);
@@ -48,7 +51,7 @@ public final class PacketInKCVAction extends AbstractPacket {
   }
 
   public UUID kickedPlayerId() {
-    return kickedPlayerId;
+    return id;
   }
 
   public String kickingCheckName() {

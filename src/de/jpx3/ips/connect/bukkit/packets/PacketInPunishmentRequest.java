@@ -10,43 +10,48 @@ import java.util.UUID;
 
 public final class PacketInPunishmentRequest extends AbstractPacket {
 
-  private UUID playerId;
+  private UUID id;
   private PunishmentType punishmentType;
   private String message;
-  private long tempbanEndTimestamp;
+  private long endTimestamp;
 
   public PacketInPunishmentRequest() {
   }
 
-  public PacketInPunishmentRequest(UUID playerId, PunishmentType punishmentType, String message, long tempbanEndTimestamp) {
-    this.playerId = playerId;
+  public PacketInPunishmentRequest(UUID id,
+                                   PunishmentType punishmentType,
+                                   String message,
+                                   long endTimestamp
+  ) {
+    this.id = id;
     this.punishmentType = punishmentType;
     this.message = message;
-    this.tempbanEndTimestamp = tempbanEndTimestamp;
+    this.endTimestamp = endTimestamp;
   }
 
   @Override
-  public void applyFrom(ByteArrayDataInput input) throws IllegalStateException, AssertionError {
+  public void applyFrom(ByteArrayDataInput input)
+    throws IllegalStateException, AssertionError {
     Preconditions.checkNotNull(input);
 
-    playerId = UUID.fromString(input.readUTF());
+    id = UUID.fromString(input.readUTF());
     punishmentType = PunishmentType.fromId(input.readInt());
     message = input.readUTF();
-    tempbanEndTimestamp = input.readLong();
+    endTimestamp = input.readLong();
   }
 
   @Override
   public void applyTo(ByteArrayDataOutput output) {
     Preconditions.checkNotNull(output);
 
-    output.writeUTF(playerId.toString());
+    output.writeUTF(id.toString());
     output.writeInt(punishmentType.typeId());
     output.writeUTF(message);
-    output.writeLong(tempbanEndTimestamp);
+    output.writeLong(endTimestamp);
   }
 
-  public UUID playerId() {
-    return playerId;
+  public UUID id() {
+    return id;
   }
 
   public PunishmentType punishmentType() {
@@ -54,7 +59,7 @@ public final class PacketInPunishmentRequest extends AbstractPacket {
   }
 
   public long endTimestamp() {
-    return tempbanEndTimestamp;
+    return endTimestamp;
   }
 
   public String message() {
