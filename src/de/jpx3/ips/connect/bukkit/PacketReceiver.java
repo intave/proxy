@@ -105,8 +105,9 @@ public final class PacketReceiver implements Listener {
     return constructPacketFrom(byteArrayDataInput, packetId);
   }
 
-  private AbstractPacket constructPacketFrom(ByteArrayDataInput byteArrayDataInput, int packetId)
-    throws IllegalAccessException, InstantiationException {
+  private AbstractPacket constructPacketFrom(ByteArrayDataInput byteArrayDataInput,
+                                             int packetId
+  ) throws IllegalAccessException, InstantiationException {
     AbstractPacket packet = PacketRegister
       .classOf(packetId)
       .orElseThrow(IllegalStateException::new)
@@ -127,7 +128,7 @@ public final class PacketReceiver implements Listener {
 
   private boolean isMarkedAsIntaveChannel(String channelTag) {
     return channelTag.equalsIgnoreCase(INCOMING_CHANNEL) ||
-      channelTag.equalsIgnoreCase(OUTGOING_CHANNEL);
+           channelTag.equalsIgnoreCase(OUTGOING_CHANNEL);
   }
 
   private boolean isUpstream(Connection connection) {
