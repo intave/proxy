@@ -39,8 +39,9 @@ public final class IntaveProxySupportPlugin extends Plugin {
 
   private void loadServices() {
     Configuration configuration = configurationService.configuration();
-    databaseService = DatabaseService.createFrom(this, configuration.getSection("connection.sql"), executor);
-    messengerService = MessengerService.createFrom(this, configuration.getSection("connection.bukkit"));
+    Configuration connectionSection = configuration.getSection("connection");
+    databaseService = DatabaseService.createFrom(this, connectionSection.getSection("sql"), executor);
+    messengerService = MessengerService.createFrom(this, connectionSection.getSection("bukkit"));
     punishmentService = PunishmentService.createFrom(this, configuration.getSection("punishment"));
   }
 
