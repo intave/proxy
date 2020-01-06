@@ -1,11 +1,11 @@
-package de.jpx3.ips.connect.bukkit.protocol.packets;
+package de.jpx3.ips.connect.bukkit.packets;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
-import de.jpx3.ips.connect.bukkit.protocol.Packet;
+import de.jpx3.ips.connect.bukkit.AbstractPacket;
 
-public final class PacketOutVersionRequest extends Packet {
+public final class PacketOutVersionRequest extends AbstractPacket {
 
   public PacketOutVersionRequest() {
   }

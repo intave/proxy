@@ -1,4 +1,4 @@
-package de.jpx3.ips.connect.bukkit.protocol.exceptions;
+package de.jpx3.ips.connect.bukkit.exceptions;
 
 public final class InvalidPacketException extends RuntimeException {
   public InvalidPacketException() {

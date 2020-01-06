@@ -11,13 +11,19 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 public final class DefaultQueryExecutor implements IQueryExecutor {
-  private Executor executor;
-  private Connection connection;
+  private final Executor executor;
+  private final Connection connection;
+  private final String databaseName;
+
   private volatile Statement statement;
 
-  DefaultQueryExecutor(Executor executor, Connection connection) {
+  DefaultQueryExecutor(Executor executor,
+                       Connection connection,
+                       String databaseName
+  ) {
     this.executor = executor;
     this.connection = connection;
+    this.databaseName = databaseName;
   }
 
   @Override

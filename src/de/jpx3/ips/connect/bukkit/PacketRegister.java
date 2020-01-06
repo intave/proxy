@@ -1,16 +1,16 @@
-package de.jpx3.ips.connect.bukkit.protocol;
+package de.jpx3.ips.connect.bukkit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import de.jpx3.ips.connect.bukkit.protocol.packets.*;
+import de.jpx3.ips.connect.bukkit.packets.*;
 
 import java.util.*;
 
 public final class PacketRegister {
-  private static Map<Integer, Class<? extends Packet>> packetIdToPacketClassMap;
+  private static Map<Integer, Class<? extends AbstractPacket>> packetIdToPacketClassMap;
 
   static {
-    Map<Integer, Class<? extends Packet>> packetMap = new HashMap<>();
+    Map<Integer, Class<? extends AbstractPacket>> packetMap = new HashMap<>();
 
     packetMap.put(0, PacketInVersionInfo.class);
     packetMap.put(1, PacketInCommandExecution.class);
@@ -22,28 +22,28 @@ public final class PacketRegister {
     packetIdToPacketClassMap = ImmutableMap.copyOf(packetMap);
   }
 
-  public static Map<Integer, Class<? extends Packet>> packetIdToClassMap() {
+  public static Map<Integer, Class<? extends AbstractPacket>> packetIdToClassMap() {
     return packetIdToPacketClassMap;
   }
 
-  public static Collection<Class<? extends Packet>> packetTypes() {
+  public static Collection<Class<? extends AbstractPacket>> packetTypes() {
     return Collections.unmodifiableCollection(
       packetIdToPacketClassMap.values()
     );
   }
 
-  public static Optional<Class<? extends Packet>> classOf(int packetId) {
-    Class<? extends Packet> value = packetIdToPacketClassMap.get(packetId);
+  public static Optional<Class<? extends AbstractPacket>> classOf(int packetId) {
+    Class<? extends AbstractPacket> value = packetIdToPacketClassMap.get(packetId);
     return Optional.ofNullable(value);
   }
 
-  public static boolean packetOutbound(Class<? extends Packet> packetClass) {
+  public static boolean packetOutbound(Class<? extends AbstractPacket> packetClass) {
     Preconditions.checkNotNull(packetClass);
 
     return identifierOf(packetClass) >= 100;
   }
 
-  public static int identifierOf(Class<? extends Packet> packetClass) {
+  public static int identifierOf(Class<? extends AbstractPacket> packetClass) {
     Preconditions.checkNotNull(packetClass);
 
     return packetIdToPacketClassMap

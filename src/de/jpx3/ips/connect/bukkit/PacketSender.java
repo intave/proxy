@@ -4,9 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.jpx3.ips.IntaveProxySupportPlugin;
-import de.jpx3.ips.connect.bukkit.protocol.Packet;
-import de.jpx3.ips.connect.bukkit.protocol.PacketRegister;
-import de.jpx3.ips.connect.bukkit.protocol.PacketSerialisationUtilities;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import static de.jpx3.ips.connect.bukkit.MessengerService.*;
@@ -28,7 +25,7 @@ public final class PacketSender {
     plugin.getProxy().unregisterChannel(OUTGOING_CHANNEL);
   }
 
-  public void sendPacket(ProxiedPlayer player, Packet packet) {
+  public void sendPacket(ProxiedPlayer player, AbstractPacket packet) {
     Preconditions.checkNotNull(player);
     Preconditions.checkNotNull(packet);
 
@@ -38,7 +35,7 @@ public final class PacketSender {
     player.sendData(OUTGOING_CHANNEL, prepareDataToSend(packet));
   }
 
-  private byte[] prepareDataToSend(Packet packet) {
+  private byte[] prepareDataToSend(AbstractPacket packet) {
     // Create byte array wrapper
     ByteArrayDataOutput byteArrayWrapper = newByteArrayDataOutput();
     // Push protocol head
@@ -65,17 +62,24 @@ public final class PacketSender {
 
   private void pushPacketHeader(
     ByteArrayDataOutput byteArrayWrapper,
-    Class<? extends Packet> packetClass
+    Class<? extends AbstractPacket> packetClass
   ) {
     byteArrayWrapper.writeInt(PacketRegister.identifierOf(packetClass));
   }
 
   private void pushPacketData(
     ByteArrayDataOutput byteArrayWrapper,
-    Packet packetToSend
+    AbstractPacket packetToSend
   ) {
-    byte[] bytes = PacketSerialisationUtilities.serializeUsing(packetToSend);
+    byte[] bytes = serialize(packetToSend);
     byteArrayWrapper.write(bytes);
+  }
+
+  private byte[] serialize(AbstractPacket packet) {
+    //noinspection UnstableApiUsage
+    ByteArrayDataOutput dataOutput = ByteStreams.newDataOutput();
+    packet.applyTo(dataOutput);
+    return dataOutput.toByteArray();
   }
 
   private void pushProtocolFooter(ByteArrayDataOutput byteArrayWrapper) {

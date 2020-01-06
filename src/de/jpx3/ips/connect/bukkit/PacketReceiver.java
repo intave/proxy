@@ -3,10 +3,8 @@ package de.jpx3.ips.connect.bukkit;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import de.jpx3.ips.IntaveProxySupportPlugin;
-import de.jpx3.ips.connect.bukkit.protocol.Packet;
-import de.jpx3.ips.connect.bukkit.protocol.PacketSerialisationUtilities;
-import de.jpx3.ips.connect.bukkit.protocol.exceptions.InvalidPacketException;
-import de.jpx3.ips.connect.bukkit.protocol.exceptions.ProtocolVersionMismatchException;
+import de.jpx3.ips.connect.bukkit.exceptions.InvalidPacketException;
+import de.jpx3.ips.connect.bukkit.exceptions.ProtocolVersionMismatchException;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -68,7 +66,7 @@ public final class PacketReceiver implements Listener {
         );
       }
 
-      Packet constructedPacket = constructPacketFrom(inputData);
+      AbstractPacket constructedPacket = constructPacketFrom(inputData);
 
       String footer = readFooter(inputData);
       if (!footer.equalsIgnoreCase("IPC_END")) {
@@ -101,15 +99,20 @@ public final class PacketReceiver implements Listener {
     return byteArrayWrapper.readInt();
   }
 
-  private Packet constructPacketFrom(ByteArrayDataInput byteArrayDataInput)
+  private AbstractPacket constructPacketFrom(ByteArrayDataInput byteArrayDataInput)
     throws InstantiationException, IllegalAccessException {
     int packetId = readPacketIdentifier(byteArrayDataInput);
     return constructPacketFrom(byteArrayDataInput, packetId);
   }
 
-  private Packet constructPacketFrom(ByteArrayDataInput byteArrayDataInput, int packetId)
+  private AbstractPacket constructPacketFrom(ByteArrayDataInput byteArrayDataInput, int packetId)
     throws IllegalAccessException, InstantiationException {
-    return PacketSerialisationUtilities.deserializeUsing(packetId, byteArrayDataInput);
+    AbstractPacket packet = PacketRegister
+      .classOf(packetId)
+      .orElseThrow(IllegalStateException::new)
+      .newInstance();
+    packet.applyFrom(byteArrayDataInput);
+    return packet;
   }
 
   private String readFooter(ByteArrayDataInput byteArrayWrapper)

@@ -10,51 +10,51 @@ import java.sql.SQLException;
 import java.util.concurrent.Executor;
 
 public final class DatabaseService {
+  private static final String CONNECTION_URL_LAYOUT = "jdbc:%s://%s:%s;databaseName=%s;user=%s;password=%s?autoReconnect=true";
+
+  private final IntaveProxySupportPlugin plugin;
   private final Configuration configuration;
   private final Executor executor;
-  private IntaveProxySupportPlugin plugin;
+
   private Connection connection;
   private IQueryExecutor queryExecutor;
 
-  private DatabaseService(IntaveProxySupportPlugin plugin, Configuration configuration, Executor executor) {
+  private DatabaseService(IntaveProxySupportPlugin plugin,
+                          Configuration configuration,
+                          Executor executor
+  ) {
     this.plugin = plugin;
     this.configuration = configuration;
     this.executor = executor;
   }
 
-  public void openConnectionIfEnabled() {
-    if (queryExecutor != null ||
-        !configuration.getBoolean("enabled")
-    ) {
+  private static final String CONFIG_KEY_SERVICE  = "jdbc-service";
+  private static final String CONFIG_KEY_HOST     = "host";
+  private static final String CONFIG_KEY_PORT     = "port";
+  private static final String CONFIG_KEY_DATABASE = "database";
+  private static final String CONFIG_KEY_USER     = "user";
+  private static final String CONFIG_KEY_PASSWORD = "password";
+
+  public void tryConnection() {
+    if (!shouldConnect()) {
       return;
     }
 
-    Configuration connectionSection = configuration.getSection("connection");
-    String service = connectionSection.getString("jdbc-service");
-    String host = connectionSection.getString("host");
-    int port = connectionSection.getInt("port");
-    String database = connectionSection.getString("database");
-    String user = connectionSection.getString("user");
-    String password = connectionSection.getString("password");
+    Configuration config = configuration.getSection("connection");
 
-    String connectionUrl = "jdbc:" + service + "://" + host + ":" + port + ";databaseName=" + database + ";user=" + user + ";password=" + password + "?autoReconnect=true";
+    String service  = config.getString(CONFIG_KEY_SERVICE);
+    String host     = config.getString(CONFIG_KEY_HOST);
+    int    port     = config.getInt   (CONFIG_KEY_PORT);
+    String database = config.getString(CONFIG_KEY_DATABASE);
+    String user     = config.getString(CONFIG_KEY_USER);
+    String password = config.getString(CONFIG_KEY_PASSWORD);
 
-    try (Connection connection = this.connection = DriverManager.getConnection(connectionUrl)) {
-      if (configuration.getBoolean("create-tables", true)) {
-        String tableCreationQuery = "CREATE TABLE IF NOT EXISTS `" +
-          database + "`.`ips_ban_entries` " +
-          "( `EntryId` INT NOT NULL AUTO_INCREMENT ," +
-          " `UniquePlayerId` VARCHAR(36) NOT NULL ," +
-          " `BanExpireTimestamp` BIGINT NOT NULL ," +
-          " `BanReason` VARCHAR NOT NULL ," +
-          " PRIMARY KEY (`EntryId`) " +
-          ") ENGINE = InnoDB;";
+    String connectionURL =
+      parseConnectionUrlFrom(service, host, port, database, user, password);
 
-        connection.createStatement().execute(tableCreationQuery);
-      }
-
-      queryExecutor = new DefaultQueryExecutor(executor, connection);
-
+    try {
+      connection = tryConnection(connectionURL);
+      queryExecutor = new DefaultQueryExecutor(executor, this.connection, database);
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -75,6 +75,29 @@ public final class DatabaseService {
       e.printStackTrace();
       return false;
     }
+  }
+
+  private Connection tryConnection(String connectionURL)
+    throws SQLException {
+    return DriverManager.getConnection(connectionURL);
+  }
+
+  private String parseConnectionUrlFrom(String service, String host, int port,
+                                        String database, String user, String password
+  ) {
+    return String.format(
+      CONNECTION_URL_LAYOUT,
+      service, host, port,
+      database, user, password
+    );
+  }
+
+  public boolean shouldCreateTables() {
+    return configuration.getBoolean("create-tables", true);
+  }
+
+  public boolean shouldConnect() {
+    return configuration.getBoolean("enabled");
   }
 
   public IQueryExecutor getQueryExecutor() {

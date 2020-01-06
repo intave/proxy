@@ -1,13 +1,13 @@
-package de.jpx3.ips.connect.bukkit.protocol.packets;
+package de.jpx3.ips.connect.bukkit.packets;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
-import de.jpx3.ips.connect.bukkit.protocol.Packet;
+import de.jpx3.ips.connect.bukkit.AbstractPacket;
 
 import java.util.UUID;
 
-public final class PacketInCommandExecution extends Packet {
+public final class PacketInCommandExecution extends AbstractPacket {
   private UUID playerId;
   private String command;
 
