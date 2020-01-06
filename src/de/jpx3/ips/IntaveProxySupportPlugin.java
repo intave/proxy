@@ -46,7 +46,7 @@ public final class IntaveProxySupportPlugin extends Plugin {
   }
 
   private void enableServices() {
-    databaseService.openConnectionIfEnabled();
+    databaseService.tryConnection();
     messengerService.setup();
     punishmentService.setup();
   }

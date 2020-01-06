@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import de.jpx3.ips.IntaveProxySupportPlugin;
 import de.jpx3.ips.connect.database.DatabaseService;
+import de.jpx3.ips.punish.BanEntry;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;

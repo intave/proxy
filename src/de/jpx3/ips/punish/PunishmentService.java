@@ -1,7 +1,7 @@
 package de.jpx3.ips.punish;
 
 import de.jpx3.ips.IntaveProxySupportPlugin;
-import de.jpx3.ips.connect.bukkit.protocol.packets.PacketInPunishmentRequest;
+import de.jpx3.ips.connect.bukkit.packets.PacketInPunishmentRequest;
 import de.jpx3.ips.punish.driver.IPunishmentDriver;
 import de.jpx3.ips.punish.driver.RemotePunishmentDriver;
 import de.jpx3.ips.punish.driver.RuntimePunishmentDriver;

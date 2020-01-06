@@ -2,6 +2,7 @@ package de.jpx3.ips.punish.driver;
 
 import com.google.common.base.Preconditions;
 import de.jpx3.ips.IntaveProxySupportPlugin;
+import de.jpx3.ips.punish.BanEntry;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
