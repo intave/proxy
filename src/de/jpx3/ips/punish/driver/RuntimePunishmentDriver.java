@@ -1,38 +1,45 @@
 package de.jpx3.ips.punish.driver;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import de.jpx3.ips.IntaveProxySupportPlugin;
 import de.jpx3.ips.punish.BanEntry;
+import de.jpx3.ips.punish.IPunishmentDriver;
+import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public final class RuntimePunishmentDriver implements IPunishmentDriver, Listener {
-  private Map<UUID, BanEntry> bannedPlayers = new HashMap<>();
-  private IntaveProxySupportPlugin plugin;
+  private final static String DENY_LOGIN_MESSAGE_PREFIX = "[Intave] ";
+
+  private final Map<UUID, BanEntry> bannedPlayers = Maps.newHashMap();
+  private final IntaveProxySupportPlugin plugin;
 
   private RuntimePunishmentDriver(IntaveProxySupportPlugin plugin) {
     this.plugin = plugin;
+  }
+
+  public void registerEvents() {
     this.plugin.getProxy()
       .getPluginManager()
       .registerListener(plugin, this);
   }
 
   @EventHandler
-  public void on(PreLoginEvent preLoginEvent) {
-    UUID playerId = preLoginEvent.getConnection().getUniqueId();
+  public void onPlayerLogin(PreLoginEvent preLoginEvent) {
+    PendingConnection connection = preLoginEvent.getConnection();
+    UUID playerId = connection.getUniqueId();
     if (bannedPlayers.containsKey(playerId)) {
       BanEntry banEntry = bannedPlayers.get(playerId);
-
       if (!banEntry.expired()) {
         String banReason = banEntry.reason();
         preLoginEvent.setCancelled(true);
-        preLoginEvent.setCancelReason("[Intave] " + banReason);
+        preLoginEvent.setCancelReason(DENY_LOGIN_MESSAGE_PREFIX + banReason);
       }
     }
   }
@@ -43,11 +50,9 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
     Preconditions.checkNotNull(kickMessage);
 
     ProxiedPlayer player = getPlayerFrom(playerId);
-
     if (player == null)
       return;
-
-    player.disconnect("[Intave] " + kickMessage);
+    player.disconnect(DENY_LOGIN_MESSAGE_PREFIX + kickMessage);
   }
 
   @Override
@@ -56,7 +61,6 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
     Preconditions.checkNotNull(banMessage);
 
     ProxiedPlayer player = getPlayerFrom(playerId);
-
     if (player == null)
       return;
 
@@ -65,9 +69,8 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
       .withId(playerId)
       .withEnd(endOfBanTimestamp)
       .build();
-
-    bannedPlayers.putIfAbsent(playerId, construct);
-    player.disconnect("[Intave] " + banMessage);
+    bannedPlayers.put(playerId, construct);
+    player.disconnect(DENY_LOGIN_MESSAGE_PREFIX + banMessage);
   }
 
   @Override
@@ -76,7 +79,6 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
     Preconditions.checkNotNull(banMessage);
 
     ProxiedPlayer player = getPlayerFrom(playerId);
-
     if (player == null)
       return;
 
@@ -85,7 +87,6 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
       .withId(playerId)
       .withAnInfiniteDuration()
       .build();
-
     bannedPlayers.put(playerId, banEntry);
     player.disconnect("[Intave] " + banMessage);
   }
@@ -95,6 +96,8 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
   }
 
   public static RuntimePunishmentDriver createFrom(IntaveProxySupportPlugin plugin) {
-    return new RuntimePunishmentDriver(plugin);
+    RuntimePunishmentDriver driver = new RuntimePunishmentDriver(plugin);
+    driver.registerEvents();
+    return driver;
   }
 }

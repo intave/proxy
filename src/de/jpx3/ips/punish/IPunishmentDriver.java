@@ -1,4 +1,4 @@
-package de.jpx3.ips.punish.driver;
+package de.jpx3.ips.punish;
 
 import java.util.UUID;
 

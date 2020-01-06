@@ -10,16 +10,16 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-public final class DefaultQueryExecutor implements IQueryExecutor {
+public final class AsyncQueryExecutor implements IQueryExecutor {
   private final Executor executor;
   private final Connection connection;
   private final String databaseName;
 
   private volatile Statement statement;
 
-  DefaultQueryExecutor(Executor executor,
-                       Connection connection,
-                       String databaseName
+  AsyncQueryExecutor(Executor executor,
+                     Connection connection,
+                     String databaseName
   ) {
     this.executor = executor;
     this.connection = connection;
@@ -31,7 +31,7 @@ public final class DefaultQueryExecutor implements IQueryExecutor {
     Preconditions.checkNotNull(query);
     ensureStatementPresence();
 
-    executor.execute(() -> {
+    pushToExecutor(() -> {
       try {
         statement.execute(query);
       } catch (SQLException e) {
@@ -41,51 +41,76 @@ public final class DefaultQueryExecutor implements IQueryExecutor {
   }
 
   @Override
-  public void find(String query, Consumer<List<Map<String, Object>>> lazyReturn) {
+  public void find(String query,
+                   Consumer<List<Map<String, Object>>> lazyReturn
+  ) {
     Preconditions.checkNotNull(query);
     Preconditions.checkNotNull(lazyReturn);
     ensureStatementPresence();
 
-    executor.execute(() -> {
+    pushToExecutor(() -> {
       try {
         ResultSet resultSet = statement.executeQuery(query);
-        List<Map<String, Object>> parsedData = parseResultSetToTableData(resultSet);
-        lazyReturn.accept(parsedData);
+        lazyReturn.accept(asTableData(resultSet));
       } catch (SQLException e) {
         e.printStackTrace();
       }
     });
   }
 
+  private void pushToExecutor(Runnable runnable) {
+    Preconditions.checkNotNull(runnable);
+
+    executor.execute(runnable);
+  }
+
   private void ensureStatementPresence() {
     if (statement == null) {
-      try {
-        this.statement = connection.createStatement();
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
+      statement = createStatement();
     }
   }
 
-  public static List<Map<String, Object>> parseResultSetToTableData(ResultSet resultSet) throws SQLException {
+  private Statement createStatement() {
+    try {
+      return connection.createStatement();
+    } catch (SQLException e) {
+      throw new IllegalStateException();
+    }
+  }
+
+  private List<Map<String, Object>> asTableData(ResultSet resultSet)
+    throws SQLException {
     Preconditions.checkNotNull(resultSet);
 
     List<Map<String, Object>> results = Lists.newArrayList();
-    ResultSetMetaData meta = resultSet.getMetaData();
-    int columnCount = meta.getColumnCount();
 
     while (resultSet.next()) {
-      Map<String, Object> row = Maps.newHashMap();
-      for (int i = 0; i < columnCount; ++i) {
-        int columnIndex = i + 1;
-        row.put(
-          meta.getColumnName(columnIndex),
-          resultSet.getObject(columnIndex)
-        );
-      }
-      results.add(row);
+      results.add(collectSelectedRowOf(resultSet));
+    }
+    return results;
+  }
+
+  private Map<String, Object> collectSelectedRowOf(ResultSet resultSet)
+    throws SQLException {
+    Preconditions.checkNotNull(resultSet);
+
+    ResultSetMetaData meta = resultSet.getMetaData();
+    Map<String, Object> row = Maps.newHashMap();
+
+    int columnCount = meta.getColumnCount();
+
+    for (int i = 0; i < columnCount; ++i) {
+      int columnIndex = i + 1;
+      row.put(
+        meta.getColumnName(columnIndex),
+        resultSet.getObject(columnIndex)
+      );
     }
 
-    return results;
+    return row;
+  }
+
+  public String database() {
+    return databaseName;
   }
 }

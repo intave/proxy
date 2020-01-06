@@ -5,12 +5,12 @@ import com.google.common.base.Preconditions;
 import java.util.UUID;
 
 public final class BanEntry {
-  private final UUID uuid;
+  private final UUID id;
   private String reason;
   private long end;
 
-  private BanEntry(UUID uuid, String reason, long end) {
-    this.uuid = uuid;
+  private BanEntry(UUID id, String reason, long end) {
+    this.id = id;
     this.reason = reason;
     this.end = end;
   }
@@ -19,8 +19,8 @@ public final class BanEntry {
     return new Builder();
   }
 
-  public UUID uuid() {
-    return uuid;
+  public UUID id() {
+    return id;
   }
 
   public String reason() {

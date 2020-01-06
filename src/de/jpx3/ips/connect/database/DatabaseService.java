@@ -18,6 +18,7 @@ public final class DatabaseService {
 
   private Connection connection;
   private IQueryExecutor queryExecutor;
+  private String database;
 
   private DatabaseService(IntaveProxySupportPlugin plugin,
                           Configuration configuration,
@@ -53,8 +54,9 @@ public final class DatabaseService {
       parseConnectionUrlFrom(service, host, port, database, user, password);
 
     try {
-      connection = tryConnection(connectionURL);
-      queryExecutor = new DefaultQueryExecutor(executor, this.connection, database);
+      this.connection = tryConnection(connectionURL);
+      this.queryExecutor = new AsyncQueryExecutor(executor, this.connection, database);
+      this.database = database;
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -108,6 +110,10 @@ public final class DatabaseService {
     Preconditions.checkNotNull(queryExecutor);
 
     this.queryExecutor = queryExecutor;
+  }
+
+  public String database() {
+    return database;
   }
 
   public static DatabaseService createFrom(IntaveProxySupportPlugin plugin,
