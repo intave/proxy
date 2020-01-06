@@ -23,24 +23,18 @@ public final class ConfigurationService {
   public static ConfigurationService createFrom(Plugin plugin) {
     Preconditions.checkNotNull(plugin);
 
-    return createFrom(plugin.getDataFolder());
-  }
+    ConfigurationProvider configurationProvider =
+      ConfigurationProvider.getProvider(YamlConfiguration.class);
+    File configurationFile
+      = new File(plugin.getDataFolder(), "config.yml");
 
-  public static ConfigurationService createFrom(File dataFolder) {
-    Preconditions.checkNotNull(dataFolder);
-
-    return createFrom(ConfigurationProvider.getProvider(YamlConfiguration.class), dataFolder);
-  }
-
-  public static ConfigurationService createFrom(ConfigurationProvider configurationProvider, File dataFolder) {
-    Preconditions.checkNotNull(configurationProvider);
-    Preconditions.checkNotNull(dataFolder);
-
+    Configuration configuration;
     try {
-      Configuration configuration = configurationProvider.load(new File(dataFolder, "config.yml"));
-      return new ConfigurationService(configuration);
+      configuration = configurationProvider.load(configurationFile);
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
+
+    return new ConfigurationService(configuration);
   }
 }
