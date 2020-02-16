@@ -14,7 +14,10 @@ public final class PunishmentService {
   private final IntaveProxySupportPlugin plugin;
   private final Configuration configuration;
 
-  private IPunishmentDriver punishmentDriver;
+  public final static String BAN_LAYOUT_CONFIGURATION_KEY = "message-layout.ban-layout";
+  public final static String KICK_LAYOUT_CONFIGURATION_KEY = "message-layout.kick-layout";
+
+  private PunishmentDriver punishmentDriver;
 
   private PunishmentService(IntaveProxySupportPlugin plugin,
                             Configuration configuration
@@ -43,6 +46,10 @@ public final class PunishmentService {
     UUID id = packet.id();
     String message = packet.message();
 
+    if(message.length() > 64) {
+      message = message.substring(0, 64);
+    }
+
     switch (packet.punishmentType()) {
       case BAN:
         punishmentDriver.
@@ -68,10 +75,10 @@ public final class PunishmentService {
   private final static String DRIVER_NAME_SQL_CACHED  = "sql";
   private final static String DRIVER_NAME_SQL_NOCACHE = "sql-nc";
 
-  private IPunishmentDriver loadDriverFrom(String driverName) {
+  private PunishmentDriver loadDriverFrom(String driverName) {
     Preconditions.checkNotNull(driverName);
 
-    IPunishmentDriver punishmentDriver;
+    PunishmentDriver punishmentDriver;
 
     switch (driverName.toLowerCase()) {
       case DRIVER_NAME_RUNTIME:
@@ -91,7 +98,14 @@ public final class PunishmentService {
     return punishmentDriver;
   }
 
-  public IPunishmentDriver punishmentDriver() {
+  public String resolveMessageBy(String configurationKey,
+                                 BanEntry banEntry
+  ) {
+    String layout = configuration.getString(configurationKey);
+    return MessageFormatter.formatMessage(layout, banEntry);
+  }
+
+  public PunishmentDriver punishmentDriver() {
     return punishmentDriver;
   }
 
@@ -99,7 +113,7 @@ public final class PunishmentService {
     return configuration.getString("driver", "runtime");
   }
 
-  public void setPunishmentDriver(IPunishmentDriver punishmentDriver) {
+  public void setPunishmentDriver(PunishmentDriver punishmentDriver) {
     this.punishmentDriver = punishmentDriver;
   }
 

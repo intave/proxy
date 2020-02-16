@@ -76,8 +76,7 @@ public final class PacketSender {
   }
 
   private byte[] serialize(AbstractPacket packet) {
-    //noinspection UnstableApiUsage
-    ByteArrayDataOutput dataOutput = ByteStreams.newDataOutput();
+    ByteArrayDataOutput dataOutput = newByteArrayDataOutput();
     packet.applyTo(dataOutput);
     return dataOutput.toByteArray();
   }

@@ -31,13 +31,16 @@ public final class AsyncQueryExecutor implements IQueryExecutor {
     Preconditions.checkNotNull(query);
     ensureStatementPresence();
 
-    pushToExecutor(() -> {
-      try {
-        statement.execute(query);
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-    });
+    pushToExecutor(() -> updateBlocking(query));
+  }
+
+  @Override
+  public void updateBlocking(String query) {
+    try {
+      statement.execute(query);
+    } catch (SQLException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   @Override
@@ -49,13 +52,21 @@ public final class AsyncQueryExecutor implements IQueryExecutor {
     ensureStatementPresence();
 
     pushToExecutor(() -> {
-      try {
-        ResultSet resultSet = statement.executeQuery(query);
-        lazyReturn.accept(asTableData(resultSet));
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
+      lazyReturn.accept(findBlocking(query));
     });
+  }
+
+  @Override
+  public List<Map<String, Object>> findBlocking(String query) {
+    Preconditions.checkNotNull(query);
+    ensureStatementPresence();
+
+    try {
+      ResultSet resultSet = statement.executeQuery(query);
+      return asTableData(resultSet);
+    } catch (SQLException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   private void pushToExecutor(Runnable runnable) {

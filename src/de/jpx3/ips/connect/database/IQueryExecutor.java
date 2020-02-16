@@ -6,5 +6,7 @@ import java.util.function.Consumer;
 
 public interface IQueryExecutor {
   void update(String query);
+  void updateBlocking(String query);
   void find(String query, Consumer<List<Map<String, Object>>> lazyReturn);
+  List<Map<String, Object>> findBlocking(String query);
 }

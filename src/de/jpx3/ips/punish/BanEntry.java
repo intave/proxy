@@ -43,6 +43,14 @@ public final class BanEntry {
     return end < System.currentTimeMillis();
   }
 
+  public String toString() {
+    return "BanEntry{" +
+      "id=" + id +
+      ", reason='" + reason + '\'' +
+      ", end=" + end +
+      '}';
+  }
+
   public static final class Builder {
     private UUID id;
     private String reason;

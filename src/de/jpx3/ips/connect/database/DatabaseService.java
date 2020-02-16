@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.concurrent.Executor;
 
 public final class DatabaseService {
-  private static final String CONNECTION_URL_LAYOUT = "jdbc:%s://%s:%s;databaseName=%s;user=%s;password=%s?autoReconnect=true";
+  private static final String CONNECTION_URL_LAYOUT = "jdbc:%s://%s:%s/%s?user=%s&password=%s&autoReconnect=true";
 
   private final IntaveProxySupportPlugin plugin;
   private final Configuration configuration;

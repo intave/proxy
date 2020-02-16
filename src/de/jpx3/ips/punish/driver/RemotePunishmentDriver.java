@@ -1,13 +1,15 @@
 package de.jpx3.ips.punish.driver;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import de.jpx3.ips.IntaveProxySupportPlugin;
 import de.jpx3.ips.connect.database.DatabaseService;
 import de.jpx3.ips.punish.BanEntry;
-import de.jpx3.ips.punish.IPunishmentDriver;
+import de.jpx3.ips.punish.PunishmentDriver;
+import de.jpx3.ips.punish.PunishmentService;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -15,17 +17,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public final class RemotePunishmentDriver implements IPunishmentDriver, Listener {
+@SuppressWarnings("UnstableApiUsage")
+public final class RemotePunishmentDriver implements PunishmentDriver, Listener {
   private final static String TABLE_NAME = "ips_ban_entries";
-  private final static String TABLE_SETUP_QUERY = "create table if not exists `%s`.`"+TABLE_NAME+"` ( `EntryId` INT NOT NULL AUTO_INCREMENT ,`UniquePlayerId` VARCHAR(36) NOT NULL ,`BanExpireTimestamp` BIGINT NOT NULL ,`BanReason` VARCHAR NOT NULL ,PRIMARY KEY (`EntryId`)) ENGINE = InnoDB;";
+  private final static String TABLE_SETUP_QUERY = "CREATE TABLE IF NOT EXISTS `%s`.`"+TABLE_NAME+"` ( `EntryId` INT NOT NULL AUTO_INCREMENT , `UniquePlayerId` VARCHAR(36) NOT NULL , `BanExpireTimestamp` BIGINT NOT NULL , `BanReason` VARCHAR(128) NOT NULL , PRIMARY KEY (`EntryId`)) ENGINE = InnoDB;";
   private final static String SELECTION_QUERY = "select * from `"+TABLE_NAME+"` where `"+TABLE_NAME+"`.`UniquePlayerId` = \"%s\"";
   private final static String INSERTION_QUERY = "insert into `"+TABLE_NAME+"` (`EntryId`, `UniquePlayerId`, `BanExpireTimestamp`, `BanReason`) values (NULL, \"%s\", \"%s\", \"%s\")";
-  private final static String DENY_LOGIN_MESSAGE_PREFIX = "[Intave] ";
 
   private IntaveProxySupportPlugin plugin;
-  private Map<UUID, BanEntry> playerBanCache = Maps.newConcurrentMap();
+  private Cache<UUID, BanEntry> playerBanCache;
+
   private DatabaseService service;
   private final boolean useCaches;
 
@@ -43,6 +47,13 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
       .registerListener(plugin, this);
   }
 
+  public void initializeCache() {
+    playerBanCache = CacheBuilder
+      .newBuilder()
+      .expireAfterWrite(2, TimeUnit.HOURS)
+      .build();
+  }
+
   public void setupTableData() {
     if(service.shouldCreateTables()) {
       String tableCreationQuery = String.format(
@@ -54,13 +65,18 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
   }
 
   @EventHandler
-  public void onPlayerLogin(PostLoginEvent postLoginEvent) {
-    resolveBanInfo(postLoginEvent.getPlayer(), banEntry -> {
-      if (banEntry != null && !banEntry.expired()) {
-        String denyReason = DENY_LOGIN_MESSAGE_PREFIX + banEntry.reason();
-        postLoginEvent.getPlayer().disconnect(denyReason);
-      }
-    });
+  public void onPlayerLogin(LoginEvent loginEvent) {
+    BanEntry banEntry = resolveNullableBanInfoBlocking(
+      loginEvent.getConnection().getUniqueId()
+    );
+    if (banEntry != null && !banEntry.expired()) {
+      String formattedMessage = formatMessageBy(
+        PunishmentService.BAN_LAYOUT_CONFIGURATION_KEY,
+        banEntry
+      );
+      loginEvent.setCancelled(true);
+      loginEvent.setCancelReason(formattedMessage);
+    }
   }
 
   @Override
@@ -72,11 +88,19 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
     if (player == null) {
       return;
     }
-    player.disconnect(DENY_LOGIN_MESSAGE_PREFIX + kickMessage);
+    String formattedMessage = formatMessageBy(
+      PunishmentService.KICK_LAYOUT_CONFIGURATION_KEY,
+      null
+    );
+
+    player.disconnect(formattedMessage);
   }
 
   @Override
-  public void banPlayerTemporarily(UUID id, long endOfBanTimestamp, String banMessage) {
+  public void banPlayerTemporarily(UUID id,
+                                   long endOfBanTimestamp,
+                                   String banMessage
+  ) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
 
@@ -91,6 +115,13 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
       .withReason(banMessage)
       .build();
     activateBan(banEntry);
+
+    String formattedMessage = formatMessageBy(
+      PunishmentService.BAN_LAYOUT_CONFIGURATION_KEY,
+      banEntry
+    );
+
+    player.disconnect(formattedMessage);
   }
 
   @Override
@@ -109,6 +140,13 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
       .withAnInfiniteDuration()
       .build();
     activateBan(banEntry);
+
+    String formattedMessage = formatMessageBy(
+      PunishmentService.BAN_LAYOUT_CONFIGURATION_KEY,
+      banEntry
+    );
+
+    player.disconnect(formattedMessage);
   }
 
   private void activateBan(BanEntry banEntry) {
@@ -129,34 +167,31 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
     updateQuery(formattedInsertionQuery);
   }
 
-  private void resolveBanInfo(ProxiedPlayer proxiedPlayer,
-                              Consumer<BanEntry> lazyReturn
-  ) {
-    Preconditions.checkNotNull(proxiedPlayer);
-    Preconditions.checkNotNull(lazyReturn);
-
-    UUID id = proxiedPlayer.getUniqueId();
+  private BanEntry resolveNullableBanInfoBlocking(UUID id) {
+    Preconditions.checkNotNull(id);
 
     if (useCaches() && isInCache(id)) {
-      lazyReturn.accept(getFromCache(id));
-      return;
+      return getFromCache(id);
     }
 
     String queryString = String.format(SELECTION_QUERY, id.toString());
-    findByQuery(queryString, mappedResult -> {
-      Optional<BanEntry> banSearch = searchActiveBan(id, mappedResult);
-      if (!banSearch.isPresent()) {
-        return;
-      }
-      BanEntry banEntry = banSearch.get();
-      if (banEntry.expired()) {
-        return;
-      }
-      if (useCaches()) {
-        setInCache(id, banEntry);
-      }
-      lazyReturn.accept(banEntry);
-    });
+    List<Map<String, Object>> mappedResult = findBlockingByQuery(queryString);
+    Optional<BanEntry> banSearch = searchActiveBan(id, mappedResult);
+
+    if (!banSearch.isPresent()) {
+      return null;
+    }
+
+    BanEntry banEntry = banSearch.get();
+    if (banEntry.expired()) {
+      return null;
+    }
+
+    if (useCaches()) {
+      setInCache(id, banEntry);
+    }
+
+    return banEntry;
   }
 
   private final static String COLUMN_NAME_EXPIRATION = "BanExpireTimestamp";
@@ -190,20 +225,24 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
     service.getQueryExecutor().find(searchCommand, lazyReturn);
   }
 
+  private List<Map<String, Object>> findBlockingByQuery(String searchCommand) {
+    return service.getQueryExecutor().findBlocking(searchCommand);
+  }
+
   private boolean entryHasExpired(long entryEnd) {
     return System.currentTimeMillis() > entryEnd;
   }
 
+  private boolean isInCache(UUID id) {
+    return getFromCache(id)!= null;
+  }
+
   private BanEntry getFromCache(UUID id) {
-    return playerBanCache.get(id);
+    return playerBanCache.getIfPresent(id);
   }
 
   private void setInCache(UUID id, BanEntry banEntry) {
     playerBanCache.put(id, banEntry);
-  }
-
-  private boolean isInCache(UUID id) {
-    return playerBanCache.containsKey(id);
   }
 
   private boolean useCaches() {
@@ -214,10 +253,17 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
     return plugin.getProxy().getPlayer(uuid);
   }
 
+  private String formatMessageBy(String configurationKey, BanEntry banEntry) {
+    return plugin
+      .punishmentService()
+      .resolveMessageBy(configurationKey, banEntry);
+  }
+
   public static RemotePunishmentDriver createWithCachingEnabled(IntaveProxySupportPlugin plugin) {
     RemotePunishmentDriver driver = new RemotePunishmentDriver(plugin, true);
     driver.setupTableData();
     driver.registerEvents();
+    driver.initializeCache();
     return driver;
   }
 
@@ -225,6 +271,7 @@ public final class RemotePunishmentDriver implements IPunishmentDriver, Listener
     RemotePunishmentDriver driver = new RemotePunishmentDriver(plugin, false);
     driver.setupTableData();
     driver.registerEvents();
+    driver.initializeCache();
     return driver;
   }
 }

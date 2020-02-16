@@ -34,25 +34,25 @@ public final class PacketReceiver implements Listener {
   @SuppressWarnings("unused")
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPluginMessageReceive(PluginMessageEvent event) {
-    if (isUpstream(event.getSender()) ||
-        !isMarkedAsIntaveChannel(event.getTag())
-    ) {
+    if (isUpstream(event.getSender())) {
       return;
     }
 
-    event.setCancelled(true);
-    receivePayloadPacket((UserConnection) event.getReceiver(), event.getData());
+    boolean isIntavePacket = receivePayloadPacket((UserConnection) event.getReceiver(), event.getData());
+
+    if(isIntavePacket) {
+      event.setCancelled(true);
+    }
   }
 
-  public void receivePayloadPacket(UserConnection player,
-                                   byte[] data
+  public boolean receivePayloadPacket(UserConnection player,
+                                      byte[] data
   ) {
     ByteArrayDataInput inputData = newByteArrayDataInputFrom(data);
     try {
-
       String channelName = readChannelName(inputData);
       if (!channelName.equalsIgnoreCase(PROTOCOL_HEADER)) {
-        return;
+        return false;
       }
 
       int protocolVersion = readProtocolVersion(inputData);
@@ -80,7 +80,11 @@ public final class PacketReceiver implements Listener {
           player,
           constructedPacket
         );
-    } catch (Exception exception) {
+
+      return true;
+    } catch (IllegalStateException exception) {
+      return false;
+    } catch (IllegalAccessException | InstantiationException exception) {
       throw new IllegalStateException("Could not handle incoming packet", exception);
     }
   }
@@ -128,8 +132,7 @@ public final class PacketReceiver implements Listener {
   }
 
   private boolean isMarkedAsIntaveChannel(String channelTag) {
-    return channelTag.equalsIgnoreCase(INCOMING_CHANNEL) ||
-           channelTag.equalsIgnoreCase(OUTGOING_CHANNEL);
+    return channelTag.equalsIgnoreCase(OUTGOING_CHANNEL);
   }
 
   private boolean isUpstream(Connection connection) {

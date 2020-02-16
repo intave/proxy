@@ -4,19 +4,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import de.jpx3.ips.IntaveProxySupportPlugin;
 import de.jpx3.ips.punish.BanEntry;
-import de.jpx3.ips.punish.IPunishmentDriver;
+import de.jpx3.ips.punish.PunishmentDriver;
+import de.jpx3.ips.punish.PunishmentService;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.Map;
 import java.util.UUID;
 
-public final class RuntimePunishmentDriver implements IPunishmentDriver, Listener {
-  private final static String DENY_LOGIN_MESSAGE_PREFIX = "[Intave] ";
-
+public final class RuntimePunishmentDriver implements PunishmentDriver, Listener {
   private final Map<UUID, BanEntry> bannedPlayers = Maps.newHashMap();
   private final IntaveProxySupportPlugin plugin;
 
@@ -31,15 +30,19 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
   }
 
   @EventHandler
-  public void onPlayerLogin(PreLoginEvent preLoginEvent) {
-    PendingConnection connection = preLoginEvent.getConnection();
+  public void onPlayerLogin(LoginEvent loginEvent) {
+    PendingConnection connection = loginEvent.getConnection();
     UUID playerId = connection.getUniqueId();
     if (bannedPlayers.containsKey(playerId)) {
       BanEntry banEntry = bannedPlayers.get(playerId);
       if (!banEntry.expired()) {
-        String banReason = banEntry.reason();
-        preLoginEvent.setCancelled(true);
-        preLoginEvent.setCancelReason(DENY_LOGIN_MESSAGE_PREFIX + banReason);
+        String formattedMessage = formatMessageBy(
+          PunishmentService.KICK_LAYOUT_CONFIGURATION_KEY,
+          null
+        );
+
+        loginEvent.setCancelled(true);
+        loginEvent.setCancelReason(formattedMessage);
       }
     }
   }
@@ -52,7 +55,11 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
     ProxiedPlayer player = getPlayerFrom(id);
     if (player == null)
       return;
-    player.disconnect(DENY_LOGIN_MESSAGE_PREFIX + kickMessage);
+    String formattedMessage = formatMessageBy(
+      PunishmentService.KICK_LAYOUT_CONFIGURATION_KEY,
+      null
+    );
+    player.disconnect(formattedMessage);
   }
 
   @Override
@@ -64,13 +71,17 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
     if (player == null)
       return;
 
-    BanEntry construct = BanEntry.builder()
+    BanEntry banEntry = BanEntry.builder()
       .withReason(banMessage)
       .withId(id)
       .withEnd(endOfBanTimestamp)
       .build();
-    bannedPlayers.put(id, construct);
-    player.disconnect(DENY_LOGIN_MESSAGE_PREFIX + banMessage);
+    bannedPlayers.put(id, banEntry);
+    String formattedMessage = formatMessageBy(
+      PunishmentService.BAN_LAYOUT_CONFIGURATION_KEY,
+      banEntry
+    );
+    player.disconnect(formattedMessage);
   }
 
   @Override
@@ -88,7 +99,17 @@ public final class RuntimePunishmentDriver implements IPunishmentDriver, Listene
       .withAnInfiniteDuration()
       .build();
     bannedPlayers.put(id, banEntry);
-    player.disconnect("[Intave] " + banMessage);
+    String formattedMessage = formatMessageBy(
+      PunishmentService.BAN_LAYOUT_CONFIGURATION_KEY,
+      banEntry
+    );
+    player.disconnect(formattedMessage);
+  }
+
+  private String formatMessageBy(String configurationKey, BanEntry banEntry) {
+    return plugin
+      .punishmentService()
+      .resolveMessageBy(configurationKey, banEntry);
   }
 
   private ProxiedPlayer getPlayerFrom(UUID uuid) {

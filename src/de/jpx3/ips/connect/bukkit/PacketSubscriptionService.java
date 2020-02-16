@@ -1,6 +1,7 @@
 package de.jpx3.ips.connect.bukkit;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.jpx3.ips.IntaveProxySupportPlugin;
@@ -12,7 +13,7 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public final class PacketSubscriptionService {
   private IntaveProxySupportPlugin plugin;
-  private Map<Class<? extends AbstractPacket>, List<IPacketSubscriber>> packetSubscriptions;
+  private Map<Class<? extends AbstractPacket>, List<PacketSubscriber>> packetSubscriptions = ImmutableMap.of();
 
   private PacketSubscriptionService(IntaveProxySupportPlugin plugin) {
     this.plugin = plugin;
@@ -33,7 +34,7 @@ public final class PacketSubscriptionService {
 
   public <P extends AbstractPacket> void addSubscriber(
     Class<P> type,
-    IPacketSubscriber<P> subscriber
+    PacketSubscriber<P> subscriber
   ) {
     Preconditions.checkNotNull(type);
     Preconditions.checkNotNull(subscriber);
@@ -53,15 +54,15 @@ public final class PacketSubscriptionService {
         packetSubscriber.handle(sender, packet));
   }
 
-  private List<IPacketSubscriber> subscriptionsOf(AbstractPacket packet) {
+  private List<PacketSubscriber> subscriptionsOf(AbstractPacket packet) {
     return subscriptionsOf(packet.getClass());
   }
 
-  private List<IPacketSubscriber> subscriptionsOf(Class<? extends AbstractPacket> packetClass) {
+  private List<PacketSubscriber> subscriptionsOf(Class<? extends AbstractPacket> packetClass) {
     return packetSubscriptions().get(packetClass);
   }
 
-  public Map<Class<? extends AbstractPacket>, List<IPacketSubscriber>> packetSubscriptions() {
+  public Map<Class<? extends AbstractPacket>, List<PacketSubscriber>> packetSubscriptions() {
     return packetSubscriptions;
   }
 

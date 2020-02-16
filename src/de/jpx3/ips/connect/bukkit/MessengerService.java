@@ -5,9 +5,8 @@ import de.jpx3.ips.IntaveProxySupportPlugin;
 import net.md_5.bungee.config.Configuration;
 
 public final class MessengerService {
-  public final static int PROTOCOL_VERSION = 2;
-  public final static String INCOMING_CHANNEL = "ipc-s2p";
-  public final static String OUTGOING_CHANNEL = "ipc-p2s";
+  public final static int PROTOCOL_VERSION = 3;
+  public final static String OUTGOING_CHANNEL = "IPC-P2S";
   public final static String PROTOCOL_HEADER = "IPC_BEGIN";
   public final static String PROTOCOL_FOOTER = "IPC_END";
 
