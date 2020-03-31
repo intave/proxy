@@ -2,10 +2,15 @@ package de.jpx3.ips.punish;
 
 import com.google.common.base.Preconditions;
 import de.jpx3.ips.IntaveProxySupportPlugin;
+import de.jpx3.ips.connect.bukkit.PacketSubscriptionService;
+import de.jpx3.ips.connect.bukkit.packets.PacketInCommandExecution;
 import de.jpx3.ips.connect.bukkit.packets.PacketInPunishmentRequest;
 import de.jpx3.ips.punish.driver.RemotePunishmentDriver;
 import de.jpx3.ips.punish.driver.RuntimePunishmentDriver;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
 
 import java.util.UUID;
@@ -32,16 +37,21 @@ public final class PunishmentService {
   }
 
   private void setupSubscriptions() {
-    plugin.messengerService()
-      .packetSubscriptionService()
-      .addSubscriber(
+    PacketSubscriptionService packetSubscriptionService =
+      plugin.messengerService().packetSubscriptionService();
+    packetSubscriptionService.addSubscriber(
         PacketInPunishmentRequest.class,
         this::processPunishmentPacket
-      );
+    );
+    packetSubscriptionService.addSubscriber(
+        PacketInCommandExecution.class,
+        this::processCommandPacket
+    );
   }
 
-  private void processPunishmentPacket(ProxiedPlayer sender,
-                                       PacketInPunishmentRequest packet
+  private void processPunishmentPacket(
+    ProxiedPlayer sender,
+    PacketInPunishmentRequest packet
   ) {
     UUID id = packet.id();
     String message = packet.message();
@@ -64,6 +74,21 @@ public final class PunishmentService {
           banPlayerTemporarily(id, packet.endTimestamp(), message);
         break;
     }
+  }
+
+  private void processCommandPacket(
+    ProxiedPlayer sender,
+    PacketInCommandExecution packet
+  ) {
+    String command = packet.command();
+    PluginManager pluginManager =
+      ProxyServer.getInstance().getPluginManager();
+    CommandSender console =
+      ProxyServer.getInstance().getConsole();
+    pluginManager.dispatchCommand(
+      console,
+      command
+    );
   }
 
   private void setupPunishmentDriver() {
