@@ -1,5 +1,5 @@
 ###                            ###
-##  Intave Proxy Support 0.9.2  ##
+##  Intave Proxy Support 0.9.3  ##
 ##           by Jpx3            ##
 ###                            ###
 
@@ -35,8 +35,6 @@ punishment:
   driver: "RUNTIME"
 
   # Message layout
-  #
-  # Please note that this is not yet working in version 0.9.2
   #
   # {expire-short} - Time until expiration (format-example: "13m 23d 13h 22m 19s" or "never")
   # {expire}       - Time until expiration with full annotations (format-example: "13 months, 23 days, 13 hours, 22 minutes & 19 seconds" or "never")
