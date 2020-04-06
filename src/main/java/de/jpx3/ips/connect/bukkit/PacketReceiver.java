@@ -1,5 +1,10 @@
 package de.jpx3.ips.connect.bukkit;
 
+import static de.jpx3.ips.connect.bukkit.MessengerService.OUTGOING_CHANNEL;
+import static de.jpx3.ips.connect.bukkit.MessengerService.PROTOCOL_FOOTER;
+import static de.jpx3.ips.connect.bukkit.MessengerService.PROTOCOL_HEADER;
+import static de.jpx3.ips.connect.bukkit.MessengerService.PROTOCOL_VERSION;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import de.jpx3.ips.IntaveProxySupportPlugin;
@@ -11,8 +16,6 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-
-import static de.jpx3.ips.connect.bukkit.MessengerService.*;
 
 public final class PacketReceiver implements Listener {
   private IntaveProxySupportPlugin plugin;
