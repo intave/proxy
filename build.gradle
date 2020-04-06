@@ -1,6 +1,13 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
+
+group = 'de.jpx3'
+version = '0.9.4-SNAPSHOT'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 repositories {
     google()
@@ -20,7 +27,30 @@ repositories {
     }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 dependencies {
     compile 'net.md-5:bungeecord-api:1.15-SNAPSHOT'
     compile 'net.md-5:bungeecord-proxy:1.15-SNAPSHOT'
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Jpx3/intave-rpoxy-support")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
