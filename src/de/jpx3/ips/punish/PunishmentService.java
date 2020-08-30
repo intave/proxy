@@ -123,8 +123,8 @@ public final class PunishmentService {
     return punishmentDriver;
   }
 
-  public String resolveMessageBy(String configurationKey,
-                                 BanEntry banEntry
+  public String resolveMessageBy(
+    String configurationKey, BanEntry banEntry
   ) {
     String layout = configuration.getString(configurationKey);
     return MessageFormatter.formatMessage(layout, banEntry);

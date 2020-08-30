@@ -219,8 +219,9 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
     service.getQueryExecutor().update(queryCommand);
   }
 
-  private void findByQuery(String searchCommand,
-                           Consumer<List<Map<String, Object>>> lazyReturn
+  private void findByQuery(
+    String searchCommand,
+    Consumer<List<Map<String, Object>>> lazyReturn
   ) {
     service.getQueryExecutor().find(searchCommand, lazyReturn);
   }

@@ -44,16 +44,14 @@ public final class AsyncQueryExecutor implements IQueryExecutor {
   }
 
   @Override
-  public void find(String query,
-                   Consumer<List<Map<String, Object>>> lazyReturn
+  public void find(
+    String query, Consumer<List<Map<String, Object>>> lazyReturn
   ) {
     Preconditions.checkNotNull(query);
     Preconditions.checkNotNull(lazyReturn);
     ensureStatementPresence();
 
-    pushToExecutor(() -> {
-      lazyReturn.accept(findBlocking(query));
-    });
+    pushToExecutor(() -> lazyReturn.accept(findBlocking(query)));
   }
 
   @Override

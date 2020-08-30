@@ -23,7 +23,6 @@ public final class IntaveProxySupportPlugin extends Plugin {
   public void onEnable() {
     singletonInstance = this;
 
-    loadConfiguration();
     loadServices();
     enableServices();
   }
@@ -33,11 +32,8 @@ public final class IntaveProxySupportPlugin extends Plugin {
     disableServices();
   }
 
-  private void loadConfiguration() {
-    configurationService = ConfigurationService.createFrom(this);
-  }
-
   private void loadServices() {
+    configurationService = ConfigurationService.createFrom(this);
     Configuration configuration = configurationService.configuration();
     Configuration connectionSection = configuration.getSection("connection");
     databaseService = DatabaseService.createFrom(this, connectionSection.getSection("sql"), executor);
