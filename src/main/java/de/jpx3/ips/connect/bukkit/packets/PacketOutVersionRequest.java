@@ -14,12 +14,10 @@ public final class PacketOutVersionRequest extends AbstractPacket {
   public void applyFrom(ByteArrayDataInput input)
     throws IllegalStateException, AssertionError {
     Preconditions.checkNotNull(input);
-
   }
 
   @Override
   public void applyTo(ByteArrayDataOutput output) {
     Preconditions.checkNotNull(output);
-
   }
 }

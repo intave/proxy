@@ -110,7 +110,6 @@ public final class DatabaseService {
 
   public void setQueryExecutor(IQueryExecutor queryExecutor) {
     Preconditions.checkNotNull(queryExecutor);
-
     this.queryExecutor = queryExecutor;
   }
 
@@ -126,7 +125,6 @@ public final class DatabaseService {
     Preconditions.checkNotNull(plugin);
     Preconditions.checkNotNull(configuration);
     Preconditions.checkNotNull(executor);
-
     return new DatabaseService(plugin, configuration, executor);
   }
 }

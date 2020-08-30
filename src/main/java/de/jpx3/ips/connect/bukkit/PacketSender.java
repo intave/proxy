@@ -93,8 +93,9 @@ public final class PacketSender {
     return ByteStreams.newDataOutput();
   }
 
-  public static PacketSender createFrom(IntaveProxySupportPlugin plugin,
-                                        MessengerService messengerService
+  public static PacketSender createFrom(
+    IntaveProxySupportPlugin plugin,
+    MessengerService messengerService
   ) {
     return new PacketSender(plugin, messengerService);
   }

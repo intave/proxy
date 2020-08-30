@@ -39,13 +39,11 @@ public final class PacketRegister {
 
   public static boolean packetOutbound(Class<? extends AbstractPacket> packetClass) {
     Preconditions.checkNotNull(packetClass);
-
     return identifierOf(packetClass) >= 100;
   }
 
   public static int identifierOf(Class<? extends AbstractPacket> packetClass) {
     Preconditions.checkNotNull(packetClass);
-
     return packetIdToPacketClassMap
       .entrySet()
       .stream()

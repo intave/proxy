@@ -21,7 +21,6 @@ public final class PacketSubscriptionService {
 
   public void setup() {
     packetSubscriptions = Maps.newHashMap();
-
     // Assign all packet-classes an empty list
     PacketRegister.packetTypes()
       .forEach(packetClass ->
@@ -38,7 +37,6 @@ public final class PacketSubscriptionService {
   ) {
     Preconditions.checkNotNull(type);
     Preconditions.checkNotNull(subscriber);
-
     subscriptionsOf(type).add(subscriber);
   }
 
@@ -48,7 +46,6 @@ public final class PacketSubscriptionService {
   ) {
     Preconditions.checkNotNull(sender);
     Preconditions.checkNotNull(packet);
-
     subscriptionsOf(packet)
       .forEach(packetSubscriber ->
         packetSubscriber.handle(sender, packet));

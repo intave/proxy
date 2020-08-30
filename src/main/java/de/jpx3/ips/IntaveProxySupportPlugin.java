@@ -13,8 +13,7 @@ import java.util.concurrent.Executors;
 public final class IntaveProxySupportPlugin extends Plugin {
   private static IntaveProxySupportPlugin singletonInstance;
 
-  private Executor executor = Executors.newSingleThreadExecutor();
-  private ConfigurationService configurationService;
+  private final Executor executor = Executors.newSingleThreadExecutor();
   private DatabaseService databaseService;
   private MessengerService messengerService;
   private PunishmentService punishmentService;
@@ -33,7 +32,7 @@ public final class IntaveProxySupportPlugin extends Plugin {
   }
 
   private void loadServices() {
-    configurationService = ConfigurationService.createFrom(this);
+    ConfigurationService configurationService = ConfigurationService.createFrom(this);
     Configuration configuration = configurationService.configuration();
     Configuration connectionSection = configuration.getSection("connection");
     databaseService = DatabaseService.createFrom(this, connectionSection.getSection("sql"), executor);
