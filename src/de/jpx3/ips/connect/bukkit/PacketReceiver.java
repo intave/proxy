@@ -15,10 +15,13 @@ import net.md_5.bungee.event.EventPriority;
 import static de.jpx3.ips.connect.bukkit.MessengerService.*;
 
 public final class PacketReceiver implements Listener {
-  private IntaveProxySupportPlugin plugin;
-  private MessengerService messengerService;
+  private final IntaveProxySupportPlugin plugin;
+  private final MessengerService messengerService;
 
-  private PacketReceiver(IntaveProxySupportPlugin plugin, MessengerService messengerService) {
+  private PacketReceiver(
+    IntaveProxySupportPlugin plugin,
+    MessengerService messengerService
+  ) {
     this.plugin = plugin;
     this.messengerService = messengerService;
   }
@@ -45,8 +48,8 @@ public final class PacketReceiver implements Listener {
     }
   }
 
-  public boolean receivePayloadPacket(UserConnection player,
-                                      byte[] data
+  public boolean receivePayloadPacket(
+    UserConnection player, byte[] data
   ) {
     ByteArrayDataInput inputData = newByteArrayDataInputFrom(data);
     try {

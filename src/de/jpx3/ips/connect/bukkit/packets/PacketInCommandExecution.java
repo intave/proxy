@@ -14,8 +14,8 @@ public final class PacketInCommandExecution extends AbstractPacket {
   public PacketInCommandExecution() {
   }
 
-  public PacketInCommandExecution(UUID id,
-                                  String command
+  public PacketInCommandExecution(
+    UUID id, String command
   ) {
     this.id = id;
     this.command = command;

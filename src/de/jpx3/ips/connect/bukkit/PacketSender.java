@@ -9,10 +9,13 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import static de.jpx3.ips.connect.bukkit.MessengerService.*;
 
 public final class PacketSender {
-  private IntaveProxySupportPlugin plugin;
-  private MessengerService messengerService;
+  private final IntaveProxySupportPlugin plugin;
+  private final MessengerService messengerService;
 
-  private PacketSender(IntaveProxySupportPlugin plugin, MessengerService messengerService) {
+  private PacketSender(
+    IntaveProxySupportPlugin plugin,
+    MessengerService messengerService
+  ) {
     this.plugin = plugin;
     this.messengerService = messengerService;
   }

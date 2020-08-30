@@ -48,8 +48,9 @@ public final class ConfigurationService {
     return new ConfigurationService(configuration);
   }
 
-  private static void ensureConfigurationExistence(File dataFolder,
-                                                   File configurationFile
+  private static void ensureConfigurationExistence(
+    File dataFolder,
+    File configurationFile
   ) {
     if(!dataFolder.exists()) {
       if(!dataFolder.mkdir()) {
@@ -74,8 +75,9 @@ public final class ConfigurationService {
 
   private final static String RESOURCE_MOVE_TO_FILE_ERROR_LAYOUT = "Unable to move resource %s to %s";
 
-  private static void moveResourceToFile(String resource,
-                                         File outputFile
+  private static void moveResourceToFile(
+    String resource,
+    File outputFile
   ) {
     try {
       ClassLoader classLoader =
@@ -87,16 +89,14 @@ public final class ConfigurationService {
 
         ByteStreams.copy(inputStream, outputStream);
       }
-    } catch (IOException e) {
+    } catch (IOException exception) {
       String errorMessage = String.format(
         RESOURCE_MOVE_TO_FILE_ERROR_LAYOUT,
         resource,
         outputFile.getAbsolutePath()
       );
-
       throw new IllegalStateException(
-        errorMessage,
-        e
+        errorMessage, exception
       );
     }
   }

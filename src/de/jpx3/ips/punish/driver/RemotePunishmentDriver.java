@@ -97,9 +97,10 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
   }
 
   @Override
-  public void banPlayerTemporarily(UUID id,
-                                   long endOfBanTimestamp,
-                                   String banMessage
+  public void banPlayerTemporarily(
+    UUID id,
+    long endOfBanTimestamp,
+    String banMessage
   ) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
@@ -197,8 +198,8 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
   private final static String COLUMN_NAME_EXPIRATION = "BanExpireTimestamp";
   private final static String COLUMN_NAME_REASON     = "BanReason";
 
-  private Optional<BanEntry> searchActiveBan(UUID id,
-                                             List<Map<String, Object>> tableData
+  private Optional<BanEntry> searchActiveBan(
+    UUID id, List<Map<String, Object>> tableData
   ) {
     for (Map<String, Object> columnData : tableData) {
       long endingOn = (long) columnData.get(COLUMN_NAME_EXPIRATION);

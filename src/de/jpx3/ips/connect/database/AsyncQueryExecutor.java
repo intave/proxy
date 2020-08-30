@@ -17,9 +17,10 @@ public final class AsyncQueryExecutor implements IQueryExecutor {
 
   private volatile Statement statement;
 
-  AsyncQueryExecutor(Executor executor,
-                     Connection connection,
-                     String databaseName
+  AsyncQueryExecutor(
+    Executor executor,
+    Connection connection,
+    String databaseName
   ) {
     this.executor = executor;
     this.connection = connection;

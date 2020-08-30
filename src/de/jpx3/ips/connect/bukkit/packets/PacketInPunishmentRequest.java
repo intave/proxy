@@ -18,10 +18,9 @@ public final class PacketInPunishmentRequest extends AbstractPacket {
   public PacketInPunishmentRequest() {
   }
 
-  public PacketInPunishmentRequest(UUID id,
-                                   PunishmentType punishmentType,
-                                   String message,
-                                   long endTimestamp
+  public PacketInPunishmentRequest(
+    UUID id, PunishmentType punishmentType,
+    String message, long endTimestamp
   ) {
     this.id = id;
     this.punishmentType = punishmentType;

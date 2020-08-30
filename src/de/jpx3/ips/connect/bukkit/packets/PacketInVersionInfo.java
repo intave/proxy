@@ -13,8 +13,8 @@ public final class PacketInVersionInfo extends AbstractPacket {
   public PacketInVersionInfo() {
   }
 
-  public PacketInVersionInfo(String intaveVersion,
-                             int protocolVersion
+  public PacketInVersionInfo(
+    String intaveVersion, int protocolVersion
   ) {
     this.intaveVersion = intaveVersion;
     this.protocolVersion = protocolVersion;

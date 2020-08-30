@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public final class MessageFormatter {
-  public static String formatMessage(String layout,
-                                     BanEntry banEntry
+  public static String formatMessage(
+    String layout, BanEntry banEntry
   ) {
     Preconditions.checkNotNull(layout);
 
@@ -58,8 +58,8 @@ public final class MessageFormatter {
   private final static String REGEX_FORMATTED_OPENING_CURLY_BRACE = "\\{";
   private final static String REGEX_FORMATTED_CLOSING_CURLY_BRACE = "}";
 
-  private static String replaceKeys(String layout,
-                                    Map<String, String> keyToReplacement
+  private static String replaceKeys(
+    String layout, Map<String, String> keyToReplacement
   ) {
     for (
       Map.Entry<String, String> keyToReplacementEntry :
@@ -90,9 +90,9 @@ public final class MessageFormatter {
   private final static String WILL_NOT_EXPIRE_EXPRESSION =
     "Never";
 
-  private static String formatDurationFrom(TimeUnitTypeNameResolver nameResolver,
-                                           String spliterator,
-                                           long timeInSeconds
+  private static String formatDurationFrom(
+    TimeUnitTypeNameResolver nameResolver,
+    String spliterator, long timeInSeconds
   ) {
     StringBuilder resultBuilder = new StringBuilder();
 
@@ -123,8 +123,9 @@ public final class MessageFormatter {
     return resultBuilder.toString();
   }
 
-  private static String unitNameOf(TimeUnit timeUnit,
-                                   TimeUnitTypeNameResolver nameResolver
+  private static String unitNameOf(
+    TimeUnit timeUnit,
+    TimeUnitTypeNameResolver nameResolver
   ) {
     return nameResolver.nameBy(timeUnit);
   }

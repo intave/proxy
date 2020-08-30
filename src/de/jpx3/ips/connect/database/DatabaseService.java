@@ -20,9 +20,10 @@ public final class DatabaseService {
   private IQueryExecutor queryExecutor;
   private String database;
 
-  private DatabaseService(IntaveProxySupportPlugin plugin,
-                          Configuration configuration,
-                          Executor executor
+  private DatabaseService(
+    IntaveProxySupportPlugin plugin,
+    Configuration configuration,
+    Executor executor
   ) {
     this.plugin = plugin;
     this.configuration = configuration;
@@ -84,8 +85,9 @@ public final class DatabaseService {
     return DriverManager.getConnection(connectionURL);
   }
 
-  private String parseConnectionUrlFrom(String service, String host, int port,
-                                        String database, String user, String password
+  private String parseConnectionUrlFrom(
+    String service, String host, int port,
+    String database, String user, String password
   ) {
     return String.format(
       CONNECTION_URL_LAYOUT,
@@ -116,9 +118,10 @@ public final class DatabaseService {
     return database;
   }
 
-  public static DatabaseService createFrom(IntaveProxySupportPlugin plugin,
-                                           Configuration configuration,
-                                           Executor executor
+  public static DatabaseService createFrom(
+    IntaveProxySupportPlugin plugin,
+    Configuration configuration,
+    Executor executor
   ) {
     Preconditions.checkNotNull(plugin);
     Preconditions.checkNotNull(configuration);

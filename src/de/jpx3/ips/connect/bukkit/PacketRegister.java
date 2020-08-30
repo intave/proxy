@@ -7,7 +7,7 @@ import de.jpx3.ips.connect.bukkit.packets.*;
 import java.util.*;
 
 public final class PacketRegister {
-  private static Map<Integer, Class<? extends AbstractPacket>> packetIdToPacketClassMap;
+  private static final Map<Integer, Class<? extends AbstractPacket>> packetIdToPacketClassMap;
 
   static {
     Map<Integer, Class<? extends AbstractPacket>> packetMap = new HashMap<>();

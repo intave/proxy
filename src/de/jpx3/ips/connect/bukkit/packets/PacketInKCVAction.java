@@ -17,8 +17,9 @@ public final class PacketInKCVAction extends AbstractPacket {
   public PacketInKCVAction() {
   }
 
-  public PacketInKCVAction(UUID id, String checkName, String checkCategory,
-                           String finalFlagMessage, int finalTotalViolationLevel
+  public PacketInKCVAction(
+    UUID id, String checkName, String checkCategory,
+    String finalFlagMessage, int finalTotalViolationLevel
   ) {
     this.id = id;
     this.kickingCheckName = checkName;

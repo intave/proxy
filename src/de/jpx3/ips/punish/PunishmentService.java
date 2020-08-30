@@ -24,8 +24,9 @@ public final class PunishmentService {
 
   private PunishmentDriver punishmentDriver;
 
-  private PunishmentService(IntaveProxySupportPlugin plugin,
-                            Configuration configuration
+  private PunishmentService(
+    IntaveProxySupportPlugin plugin,
+    Configuration configuration
   ) {
     this.plugin = plugin;
     this.configuration = configuration;
@@ -142,8 +143,9 @@ public final class PunishmentService {
     this.punishmentDriver = punishmentDriver;
   }
 
-  public static PunishmentService createFrom(IntaveProxySupportPlugin plugin,
-                                             Configuration configuration
+  public static PunishmentService createFrom(
+    IntaveProxySupportPlugin plugin,
+    Configuration configuration
   ) {
     return new PunishmentService(plugin, configuration);
   }
