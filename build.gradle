@@ -34,7 +34,6 @@ java {
 
 dependencies {
     compile 'net.md-5:bungeecord-api:1.16-R0.4'
-    compile 'net.md-5:bungeecord-proxy:1.15-SNAPSHOT'
 }
 
 publishing {

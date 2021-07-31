@@ -5,8 +5,8 @@ import com.google.common.io.ByteStreams;
 import de.jpx3.ips.IntaveProxySupportPlugin;
 import de.jpx3.ips.connect.bukkit.exceptions.InvalidPacketException;
 import de.jpx3.ips.connect.bukkit.exceptions.ProtocolVersionMismatchException;
-import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.connection.Connection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -40,14 +40,14 @@ public final class PacketReceiver implements Listener {
     if (isUpstream(event.getSender())) {
       return;
     }
-    boolean isIntavePacket = receivePayloadPacket((UserConnection) event.getReceiver(), event.getData());
+    boolean isIntavePacket = receivePayloadPacket((ProxiedPlayer) event.getReceiver(), event.getData());
     if(isIntavePacket) {
       event.setCancelled(true);
     }
   }
 
   public boolean receivePayloadPacket(
-    UserConnection player, byte[] data
+    ProxiedPlayer player, byte[] data
   ) {
     ByteArrayDataInput inputData = newByteArrayDataInputFrom(data);
     try {
@@ -132,7 +132,7 @@ public final class PacketReceiver implements Listener {
   }
 
   private boolean isUpstream(Connection connection) {
-    return connection instanceof UserConnection;
+    return connection instanceof ProxiedPlayer;
   }
 
   public static PacketReceiver createFrom(
