@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'de.jpx3'
-version = '0.9.4-SNAPSHOT'
+version = '0.9.9-SNAPSHOT'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -33,7 +33,7 @@ java {
 }
 
 dependencies {
-    compile 'net.md-5:bungeecord-api:1.15-SNAPSHOT'
+    compile 'net.md-5:bungeecord-api:1.16-R0.4'
     compile 'net.md-5:bungeecord-proxy:1.15-SNAPSHOT'
 }
 
