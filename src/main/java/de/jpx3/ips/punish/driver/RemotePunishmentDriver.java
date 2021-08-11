@@ -83,7 +83,6 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
   public void kickPlayer(UUID id, String kickMessage) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(kickMessage);
-
     ProxiedPlayer player = getPlayerFrom(id);
     if (player == null) {
       return;
@@ -92,7 +91,6 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
       PunishmentService.KICK_LAYOUT_CONFIGURATION_KEY,
       null
     );
-
     player.disconnect(formattedMessage);
   }
 
@@ -104,24 +102,20 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
   ) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
-
     ProxiedPlayer player = getPlayerFrom(id);
     if (player == null) {
       return;
     }
-
     BanEntry banEntry = BanEntry.builder()
       .withId(id)
       .withEnd(endOfBanTimestamp)
       .withReason(banMessage)
       .build();
     activateBan(banEntry);
-
     String formattedMessage = formatMessageBy(
       PunishmentService.BAN_LAYOUT_CONFIGURATION_KEY,
       banEntry
     );
-
     player.disconnect(formattedMessage);
   }
 
@@ -129,24 +123,20 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
   public void banPlayer(UUID id, String banMessage) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
-
     ProxiedPlayer player = getPlayerFrom(id);
     if (player == null) {
       return;
     }
-
     BanEntry banEntry = BanEntry.builder()
       .withId(id)
       .withReason(banMessage)
       .withAnInfiniteDuration()
       .build();
     activateBan(banEntry);
-
     String formattedMessage = formatMessageBy(
       PunishmentService.BAN_LAYOUT_CONFIGURATION_KEY,
       banEntry
     );
-
     player.disconnect(formattedMessage);
   }
 
@@ -155,10 +145,8 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
     if (useCaches) {
       setInCache(id, banEntry);
     }
-
     String reason = banEntry.reason();
     long end = banEntry.ending();
-
     String formattedInsertionQuery = String.format(
       INSERTION_QUERY,
       id.toString(),
@@ -170,28 +158,22 @@ public final class RemotePunishmentDriver implements PunishmentDriver, Listener 
 
   private BanEntry resolveNullableBanInfoBlocking(UUID id) {
     Preconditions.checkNotNull(id);
-
     if (useCaches() && isInCache(id)) {
       return getFromCache(id);
     }
-
     String queryString = String.format(SELECTION_QUERY, id.toString());
     List<Map<String, Object>> mappedResult = findBlockingByQuery(queryString);
     Optional<BanEntry> banSearch = searchActiveBan(id, mappedResult);
-
     if (!banSearch.isPresent()) {
       return null;
     }
-
     BanEntry banEntry = banSearch.get();
     if (banEntry.expired()) {
       return null;
     }
-
     if (useCaches()) {
       setInCache(id, banEntry);
     }
-
     return banEntry;
   }
 

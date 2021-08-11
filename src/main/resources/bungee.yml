@@ -1,6 +1,6 @@
 name: IntaveProxySupport
 author: Jpx3
 description: Proxy support for Intave AntiCheat. Made with - not only but mostly - my keyboard and some love.
-version: 1.0.0
+version: 1.0.1
 
 main: de.jpx3.ips.IntaveProxySupportPlugin

@@ -40,7 +40,6 @@ public final class RuntimePunishmentDriver implements PunishmentDriver, Listener
           PunishmentService.KICK_LAYOUT_CONFIGURATION_KEY,
           null
         );
-
         loginEvent.setCancelled(true);
         loginEvent.setCancelReason(formattedMessage);
       }
@@ -51,13 +50,12 @@ public final class RuntimePunishmentDriver implements PunishmentDriver, Listener
   public void kickPlayer(UUID id, String kickMessage) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(kickMessage);
-
     ProxiedPlayer player = getPlayerFrom(id);
     if (player == null)
       return;
     String formattedMessage = formatMessageBy(
       PunishmentService.KICK_LAYOUT_CONFIGURATION_KEY,
-      null
+      BanEntry.builder().withId(id).withReason(kickMessage).withAnInfiniteDuration().build()
     );
     player.disconnect(formattedMessage);
   }
@@ -66,11 +64,9 @@ public final class RuntimePunishmentDriver implements PunishmentDriver, Listener
   public void banPlayerTemporarily(UUID id, long endOfBanTimestamp, String banMessage) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
-
     ProxiedPlayer player = getPlayerFrom(id);
     if (player == null)
       return;
-
     BanEntry banEntry = BanEntry.builder()
       .withReason(banMessage)
       .withId(id)
@@ -88,11 +84,9 @@ public final class RuntimePunishmentDriver implements PunishmentDriver, Listener
   public void banPlayer(UUID id, String banMessage) {
     Preconditions.checkNotNull(id);
     Preconditions.checkNotNull(banMessage);
-
     ProxiedPlayer player = getPlayerFrom(id);
     if (player == null)
       return;
-
     BanEntry banEntry = BanEntry.builder()
       .withReason(banMessage)
       .withId(id)
