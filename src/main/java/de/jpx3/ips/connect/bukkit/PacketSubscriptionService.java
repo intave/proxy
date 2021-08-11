@@ -31,7 +31,7 @@ public final class PacketSubscriptionService {
     packetSubscriptions.clear();
   }
 
-  public <P extends AbstractPacket> void addSubscriber(
+  public <P extends AbstractPacket> void subscribe(
     Class<P> type,
     PacketSubscriber<P> subscriber
   ) {

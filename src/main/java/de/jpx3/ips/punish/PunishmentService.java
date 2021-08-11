@@ -40,11 +40,11 @@ public final class PunishmentService {
   private void setupSubscriptions() {
     PacketSubscriptionService packetSubscriptionService =
       plugin.messengerService().packetSubscriptionService();
-    packetSubscriptionService.addSubscriber(
+    packetSubscriptionService.subscribe(
         PacketInPunishmentRequest.class,
         this::processPunishmentPacket
     );
-    packetSubscriptionService.addSubscriber(
+    packetSubscriptionService.subscribe(
         PacketInCommandExecution.class,
         this::processCommandPacket
     );
@@ -82,14 +82,10 @@ public final class PunishmentService {
     PacketInCommandExecution packet
   ) {
     String command = packet.command();
-    PluginManager pluginManager =
-      ProxyServer.getInstance().getPluginManager();
-    CommandSender console =
-      ProxyServer.getInstance().getConsole();
-    pluginManager.dispatchCommand(
-      console,
-      command
-    );
+    ProxyServer server = ProxyServer.getInstance();
+    PluginManager pluginManager = server.getPluginManager();
+    CommandSender console = server.getConsole();
+    pluginManager.dispatchCommand(console, command);
   }
 
   private void setupPunishmentDriver() {
