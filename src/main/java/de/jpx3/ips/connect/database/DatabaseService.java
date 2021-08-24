@@ -64,6 +64,9 @@ public final class DatabaseService {
   }
 
   public void closeConnection() {
+    if (!shouldConnect())
+      return;
+    
     try {
       connection.close();
     } catch (SQLException e) {
