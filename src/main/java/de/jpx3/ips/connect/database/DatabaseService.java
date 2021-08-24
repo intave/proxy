@@ -64,7 +64,7 @@ public final class DatabaseService {
   }
 
   public void closeConnection() {
-    if (!shouldConnect())
+    if (connection == null)
       return;
     
     try {
